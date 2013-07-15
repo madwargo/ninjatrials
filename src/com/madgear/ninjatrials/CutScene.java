@@ -22,7 +22,8 @@ public class CutScene extends ManagedScene {
 
 	@Override
 	public void onLoadScene() {
-		// TODO Auto-generated method stub
+		getBackground().setColor(0.09804f, 0.6274f, 0.8784f);  // fondo de prueba
+
 
 	}
 

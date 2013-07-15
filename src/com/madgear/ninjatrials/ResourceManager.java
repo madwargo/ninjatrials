@@ -3,6 +3,7 @@ package com.madgear.ninjatrials;
 
 import java.io.IOException;
 
+import org.andengine.audio.music.Music;
 import org.andengine.audio.sound.Sound;
 import org.andengine.audio.sound.SoundFactory;
 import org.andengine.engine.Engine;
@@ -51,6 +52,8 @@ public class ResourceManager {
 
 	public static String fontName = "go3v2.ttf";
 	
+	public Music music;
+	
 	public Sound mSound;
 
 	public Font	mFont;
@@ -58,6 +61,7 @@ public class ResourceManager {
 	public float cameraScaleFactorX = 1;
 
 	public float cameraScaleFactorY = 1;
+
 
 	
 	// Inicializa el manejador
