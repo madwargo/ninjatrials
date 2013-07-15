@@ -37,7 +37,7 @@ public class ResourceManager {
 	   to them when creating new Sprites, Text objects and to play sound files */
 	
 	
-	public MainActivity activity;
+	public NinjaTrials activity;
 	public Engine engine;
 	public Context context;
 	public float cameraWidth;
@@ -61,7 +61,7 @@ public class ResourceManager {
 
 	
 	// Inicializa el manejador
-	public static void setup(MainActivity pActivity, Engine pEngine, Context pContext, 
+	public static void setup(NinjaTrials pActivity, Engine pEngine, Context pContext, 
 			float pCameraWidth, float pCameraHeight, float pCameraScaleX, float pCameraScaleY){
 		
 		getInstance().activity = pActivity;

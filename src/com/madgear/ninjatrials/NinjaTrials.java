@@ -11,7 +11,7 @@ import com.madgear.pruebasandengine.R;
 import android.os.Bundle;
 import android.view.Menu;
 
-public class MainActivity extends BaseGameActivity {
+public class NinjaTrials extends BaseGameActivity {
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
