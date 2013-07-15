@@ -28,15 +28,12 @@ import android.util.Log;
 
 public class ResourceManager {
 
-
-	
-	
 	// ResourceManager Singleton instance
 	private static ResourceManager INSTANCE;
 	
+	
 	/* The variables listed should be kept public, allowing us easy access
 	   to them when creating new Sprites, Text objects and to play sound files */
-	
 	
 	public NinjaTrials activity;
 	public Engine engine;
@@ -45,9 +42,35 @@ public class ResourceManager {
 	public float cameraHeight;
 	
 	
+	// CUT SCENE:
+	public ITiledTextureRegion cut_shoCut;
+	public ITiledTextureRegion cut_tree;
+	public ITiledTextureRegion cut_candle;
+	public ITiledTextureRegion cut_candle_light;
+	public ITextureRegion cut_eyes;
 	
-	public BuildableBitmapTextureAtlas mBitmapTextureAtlas;
+	
+	
+	
+	
+	
+	// FONTS:
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	//public BuildableBitmapTextureAtlas mBitmapTextureAtlas;
+	
 	public ITiledTextureRegion mTiledTextureRegion;
+	
+	
 	//public ITextureRegion mSpriteTextureRegion;
 
 	public static String fontName = "go3v2.ttf";
@@ -58,35 +81,25 @@ public class ResourceManager {
 
 	public Font	mFont;
 
-	public float cameraScaleFactorX = 1;
+/*	public float cameraScaleFactorX = 1;
 
-	public float cameraScaleFactorY = 1;
+	public float cameraScaleFactorY = 1;*/
 
 
 	
-	// Inicializa el manejador
+	// Inicializa el manejador:
 	public static void setup(NinjaTrials pActivity, Engine pEngine, Context pContext, 
-			float pCameraWidth, float pCameraHeight, float pCameraScaleX, float pCameraScaleY){
+			float pCameraWidth, float pCameraHeight){
 		
 		getInstance().activity = pActivity;
 		getInstance().engine = pEngine; 
 		getInstance().context = pContext;
 		getInstance().cameraWidth = pCameraWidth;
 		getInstance().cameraHeight = pCameraHeight;		
-/*		
 
-		
-		getInstance().cameraScaleFactorX = pCameraScaleX;
-		getInstance().cameraScaleFactorY = pCameraScaleY;*/
 	}
 	
-	
-	
-	
-	
-	
-	
-	
+	// Constructor:
 	ResourceManager(){
 		// The constructor is of no use to us
 	}
@@ -98,6 +111,62 @@ public class ResourceManager {
 		return INSTANCE;
 	}
 
+	// Cada escena debe tener sus métodos para cargar y descargar recursos (metodo load y unload).
+	// tanto en gráficos como música y sonido.
+	// Deben ser "synchronized".
+	
+	
+	// Recursos para la escena de corte:
+	public synchronized void loadCutSceneResources() {
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/cutscene");
+		
+		// Bitmap atlas para sho:
+		BuildableBitmapTextureAtlas mBitmapTextureAtlas =
+				new BuildableBitmapTextureAtlas(engine.getTextureManager(), 1742, 1720, TextureOptions.BILINEAR);
+		
+		// Metemos el sprite de Sho en el atlas:
+		cut_shoCut = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mBitmapTextureAtlas, context, "cut_ch_sho_cut_anim.png", 2, 2);
+		
+		try {
+			mBitmapTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 0, 0));
+		} catch (TextureAtlasBuilderException e) {
+			e.printStackTrace();
+		}
+		
+		mBitmapTextureAtlas.load();
+	
+		
+		
+		
+		
+		
+		
+		
+	}
+	
+	// Liberamos los recursos de la escena de corte:
+	public synchronized void unloadCutSceneResources() {
+	
+		BuildableBitmapTextureAtlas mBitmapTextureAtlas;
+		
+		mBitmapTextureAtlas = (BuildableBitmapTextureAtlas) cut_shoCut.getTexture();
+		mBitmapTextureAtlas.unload();
+		
+		
+		
+		
+		
+		// ... Continue to unload all textures related to the 'Game' scene
+		
+		
+		
+		// Garbage Collector:
+		System.gc();
+	}
+	
+	
+	
+	
 	/* Each scene within a game should have a loadTextures method as well
 	 * as an accompanying unloadTextures method. This way, we can display
 	 * a loading image during scene swapping, unload the first scene's textures

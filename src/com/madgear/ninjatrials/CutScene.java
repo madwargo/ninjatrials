@@ -1,6 +1,7 @@
 package com.madgear.ninjatrials;
 
 import org.andengine.entity.scene.Scene;
+import org.andengine.entity.scene.background.SpriteBackground;
 
 public class CutScene extends ManagedScene {
 
@@ -20,10 +21,13 @@ public class CutScene extends ManagedScene {
 
 	}
 
+	// Cargamos recursos:
 	@Override
 	public void onLoadScene() {
-		getBackground().setColor(0.09804f, 0.6274f, 0.8784f);  // fondo de prueba
+		getBackground().setColor(0.09804f, 0.6274f, 0.8784f);  // fondo de prueba para ver si carga.
 
+		//this.setBackground(new SpriteBackground(ResourceManager.getInstance().cut_eyes));
+		ResourceManager.getInstance().loadCutSceneResources();
 
 	}
 
@@ -39,10 +43,11 @@ public class CutScene extends ManagedScene {
 
 	}
 
+	
+	// Liberamos recursos:
 	@Override
 	public void onUnloadScene() {
-		// TODO Auto-generated method stub
-
+		ResourceManager.getInstance().unloadCutSceneResources();
 	}
 
 }

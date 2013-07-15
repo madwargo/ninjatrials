@@ -89,7 +89,7 @@ public class NinjaTrials extends BaseGameActivity {
 		
 		// Setup de ResourceManager.
 		ResourceManager.setup(this, this.getEngine(), this.getApplicationContext(),
-				WIDTH, HEIGHT, 0,0);
+				WIDTH, HEIGHT);
 
 		// Iniciamos la puntuación, fase, etc
 		GameManager.getInstance().resetGame();
@@ -112,6 +112,7 @@ public class NinjaTrials extends BaseGameActivity {
 		mScene.getBackground().setColor(0.09804f, 0.6274f, 0.8784f);
 		*/
 	
+		// No necesitamos ninguna escena
 		// Notify the callback that we're finished creating the scene, returning
 		// mScene to the mEngine object (handled automatically)
 		pOnCreateSceneCallback.onCreateSceneFinished(null);
