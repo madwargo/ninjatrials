@@ -29,7 +29,11 @@ proguard/
 .idea/
 
 # Git repos
-/.git
+.git/
 
+# Otros
+proguard-project.txt
+project.properties
+.settings/
 
 

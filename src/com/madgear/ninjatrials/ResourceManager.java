@@ -81,9 +81,9 @@ public class ResourceManager {
 
 	public Font	mFont;
 
-/*	public float cameraScaleFactorX = 1;
+	public float cameraScaleFactorX = 1;
 
-	public float cameraScaleFactorY = 1;*/
+	public float cameraScaleFactorY = 1;
 
 
 	
@@ -118,7 +118,7 @@ public class ResourceManager {
 	
 	// Recursos para la escena de corte:
 	public synchronized void loadCutSceneResources() {
-		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/cutscene");
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/trial_cut");
 		
 		// Bitmap atlas para sho:
 		BuildableBitmapTextureAtlas mBitmapTextureAtlas =
