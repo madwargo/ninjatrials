@@ -13,6 +13,8 @@ import org.andengine.ui.activity.BaseGameActivity;
 
 
 
+
+
 public class NinjaTrials extends BaseGameActivity {
 
 	// Resolución de la cámara:
@@ -33,19 +35,17 @@ public class NinjaTrials extends BaseGameActivity {
 	@Override
 	public EngineOptions onCreateEngineOptions() {
 
-		// Define our mCamera object
+		// Camara:
 		mCamera = new Camera(0, 0, WIDTH, HEIGHT);
 
-		// Declare & Define our engine options to be applied to our Engine object
+		// Opciones de engine:
 		EngineOptions engineOptions = new EngineOptions(
 				true,
 				ScreenOrientation.LANDSCAPE_FIXED,
 				new RatioResolutionPolicy(16/9f),   // Ratio 16:9
 				mCamera);
 
-		// It is necessary in a lot of applications to define the following
-		// wake lock options in order to disable the device's display
-		// from turning off during gameplay due to inactivity
+		// Pantalla encendida siempre:
 		engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);
 
 		// Música:
@@ -82,6 +82,8 @@ public class NinjaTrials extends BaseGameActivity {
 		return true;
 	}*/
 
+	
+	
 	@Override
 	public void onCreateResources(
 			OnCreateResourcesCallback pOnCreateResourcesCallback) {
@@ -97,43 +99,37 @@ public class NinjaTrials extends BaseGameActivity {
 		// Se crea el fichero de datos del usuario si no existe:
 		UserData.getInstance().init(ResourceManager.getInstance().context);
 
-		/* We should notify the pOnCreateResourcesCallback that we've finished
-		 * loading all of the necessary resources in our game AFTER they are loaded.
-		 * onCreateResourcesFinished() should be the last method called.  */
+		// Cargamos las fuentes:
+		ResourceManager.getInstance().loadFonts(ResourceManager.getInstance().engine);
+
 		pOnCreateResourcesCallback.onCreateResourcesFinished();
 		
 	}
 
+	
+	
 	@Override
 	public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback) {
-		
-/*		// Create the Scene object
-		Scene mScene = new Scene();
-		mScene.getBackground().setColor(0.09804f, 0.6274f, 0.8784f);
-		*/
 	
 		// No necesitamos ninguna escena
-		// Notify the callback that we're finished creating the scene, returning
-		// mScene to the mEngine object (handled automatically)
 		pOnCreateSceneCallback.onCreateSceneFinished(null);
 	}
 
+	
+	
 	@Override
 	public void onPopulateScene(Scene pScene,
 			OnPopulateSceneCallback pOnPopulateSceneCallback) {
 		
 		// Iniciamos a la primera escena:
-		SceneManager.getInstance().showScene(new CutScene());
+		SceneManager.getInstance().showScene(new SceneGameCut());
 		
-		
-		// onPopulateSceneFinished(), similar to the resource and scene callback
-		// methods, should be called once we are finished populating the scene.
 		pOnPopulateSceneCallback.onPopulateSceneFinished();
 	}
 
-	/* Music objects which loop continuously should be played in
-	 * onResumeGame() of the activity life cycle
-	 */
+	
+	
+	// CONTINUAR juego:
 	@Override
 	public synchronized void onResumeGame() {
 		if(ResourceManager.getInstance().music != null && !ResourceManager.getInstance().music.isPlaying()){
@@ -143,9 +139,8 @@ public class NinjaTrials extends BaseGameActivity {
 	}
 	
 	
-	/* Music objects which loop continuously should be paused in
-	 * onPauseGame() of the activity life cycle
-	 */
+	
+	// Juego en PAUSA:
 	@Override
 	public synchronized void onPauseGame() {
 		if(ResourceManager.getInstance().music != null && ResourceManager.getInstance().music.isPlaying()){
@@ -155,5 +150,24 @@ public class NinjaTrials extends BaseGameActivity {
 	}
 
 
+	// Liberamos la memoria:
+	public void onUnloadResources () {
+		
+		ResourceManager.getInstance().unloadFonts();
+
+		
+	}
+	
+	
+	// Esto finaliza el juego:
+	/*	// Some devices do not exit the game when the activity is destroyed.
+		// This ensures that the game is closed.
+		@Override
+		protected void onDestroy() {
+			super.onDestroy();
+			System.exit(0);
+		}*/
+	
+	
 
 }

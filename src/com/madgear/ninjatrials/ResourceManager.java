@@ -9,6 +9,7 @@ import org.andengine.audio.sound.SoundFactory;
 import org.andengine.engine.Engine;
 import org.andengine.opengl.font.Font;
 import org.andengine.opengl.font.FontFactory;
+import org.andengine.opengl.texture.TextureManager;
 import org.andengine.opengl.texture.TextureOptions;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlas;
 import org.andengine.opengl.texture.atlas.bitmap.BitmapTextureAtlasTextureRegionFactory;
@@ -18,6 +19,7 @@ import org.andengine.opengl.texture.atlas.buildable.builder.BlackPawnTextureAtla
 import org.andengine.opengl.texture.atlas.buildable.builder.ITextureAtlasBuilder.TextureAtlasBuilderException;
 import org.andengine.opengl.texture.region.ITextureRegion;
 import org.andengine.opengl.texture.region.ITiledTextureRegion;
+import org.andengine.opengl.texture.region.TiledTextureRegion;
 import org.andengine.util.debug.Debug;
 
 import android.content.Context;
@@ -28,6 +30,9 @@ import android.util.Log;
 
 public class ResourceManager {
 
+	private static final TextureOptions mTransparentTextureOption = TextureOptions.BILINEAR;
+	
+	
 	// ResourceManager Singleton instance
 	private static ResourceManager INSTANCE;
 	
@@ -40,25 +45,26 @@ public class ResourceManager {
 	public Context context;
 	public float cameraWidth;
 	public float cameraHeight;
+	public TextureManager textureManager;
 	
 	
 	// CUT SCENE:
-	public ITiledTextureRegion cut_shoCut;
-	public ITiledTextureRegion cut_tree;
-	public ITiledTextureRegion cut_candle;
-	public ITiledTextureRegion cut_candle_light;
-	public ITextureRegion cut_eyes;
-	
-	
-	
-	
+	public static ITiledTextureRegion cutShoTR;
+	public static ITextureRegion cutTreeTR;
+	public static ITiledTextureRegion cutCandleTR;
+	public static ITiledTextureRegion cutCandleLightTR;
+	public static ITextureRegion cutEyesTR;
+	public static ITextureRegion cutBackgroundTR;
+	public static ITextureRegion cutSweatDropTR;
+	public static ITextureRegion cutSwordSparkle1TR;
+	public static ITiledTextureRegion cutSwordSparkle2TR;
+	public static ITextureRegion cutHudBarTR;
+	public static ITextureRegion cutHudCursorTR;
 	
 	
 	// FONTS:
-	
-	
-	
-	
+	public Font fontSmall;		// pequeño
+	public Font fontBig;		// grande
 	
 	
 	
@@ -73,13 +79,10 @@ public class ResourceManager {
 	
 	//public ITextureRegion mSpriteTextureRegion;
 
-	public static String fontName = "go3v2.ttf";
 	
 	public Music music;
 	
 	public Sound mSound;
-
-	public Font	mFont;
 
 	public float cameraScaleFactorX = 1;
 
@@ -96,7 +99,7 @@ public class ResourceManager {
 		getInstance().context = pContext;
 		getInstance().cameraWidth = pCameraWidth;
 		getInstance().cameraHeight = pCameraHeight;		
-
+		getInstance().textureManager = pActivity.getTextureManager();
 	}
 	
 	// Constructor:
@@ -118,47 +121,160 @@ public class ResourceManager {
 	
 	// Recursos para la escena de corte:
 	public synchronized void loadCutSceneResources() {
-		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/trial_cut");
 		
-		// Bitmap atlas para sho:
-		BuildableBitmapTextureAtlas mBitmapTextureAtlas =
-				new BuildableBitmapTextureAtlas(engine.getTextureManager(), 1742, 1720, TextureOptions.BILINEAR);
+		// Texturas:
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/trial_cut/");
 		
-		// Metemos el sprite de Sho en el atlas:
-		cut_shoCut = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mBitmapTextureAtlas, context, "cut_ch_sho_cut_anim.png", 2, 2);
+		BuildableBitmapTextureAtlas
+			shoTextureAtlas = new BuildableBitmapTextureAtlas(textureManager, 1742, 1720, mTransparentTextureOption),
+			//treeTextureAtlas = new BuildableBitmapTextureAtlas(textureManager, 640, 950, mTransparentTextureOption),
+			candleTextureAtlas = new BuildableBitmapTextureAtlas(textureManager, 310, 860, mTransparentTextureOption),
+			candleLightTextureAtlas = new BuildableBitmapTextureAtlas(textureManager, 760, 380, mTransparentTextureOption),
+			swordSparkle2TextureAtlas = new BuildableBitmapTextureAtlas(textureManager, 1358, 1034, mTransparentTextureOption);
+		
+		cutShoTR = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(shoTextureAtlas, context, "cut_ch_sho_cut_anim.png", 2, 2);
+		//cutTreeTR = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(treeTextureAtlas, context, "cut_breakable_tree.png", 1, 2);
+		cutCandleTR = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(candleTextureAtlas, context, "cut_breakable_candle_base.png", 1, 2);
+		cutCandleLightTR = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(candleLightTextureAtlas, context, "cut_breakable_candle_light.png", 2, 1);
+		cutSwordSparkle2TR = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(swordSparkle2TextureAtlas, context, "cut_sword_sparkle2.png", 1, 2);
 		
 		try {
-			mBitmapTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 0, 0));
-		} catch (TextureAtlasBuilderException e) {
-			e.printStackTrace();
+			shoTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 0, 0));
+			//treeTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 0, 0));
+			candleTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 0, 0));
+			candleLightTextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 0, 0));
+			swordSparkle2TextureAtlas.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 0, 0));
+			
+		} catch (TextureAtlasBuilderException e) { 
+			e.printStackTrace(); 
 		}
 		
-		mBitmapTextureAtlas.load();
-	
+		shoTextureAtlas.load();
+		//treeTextureAtlas.load();		
+		candleTextureAtlas.load();
+		candleLightTextureAtlas.load();
+		swordSparkle2TextureAtlas.load();
 		
 		
+		BitmapTextureAtlas
+			eyesTextureAtlas = new BitmapTextureAtlas(textureManager, 1416, 611, mTransparentTextureOption),
+			treeTextureAtlas = new BitmapTextureAtlas(textureManager, 640, 950, mTransparentTextureOption),
+			backgroundTextureAtlas = new BitmapTextureAtlas(textureManager, 1920, 1080, mTransparentTextureOption),
+			sweatDropTextureAtlas = new BitmapTextureAtlas(textureManager, 46, 107, mTransparentTextureOption),
+			swordSparkle1TextureAtlas = new BitmapTextureAtlas(textureManager, 503, 345, mTransparentTextureOption),
+			hudBarTextureAtlas = new BitmapTextureAtlas(textureManager, 240, 120, mTransparentTextureOption),
+			hudCursorTextureAtlas = new BitmapTextureAtlas(textureManager, 59, 52, mTransparentTextureOption);
+													
+
+		if(cutEyesTR==null) {
+			cutEyesTR = BitmapTextureAtlasTextureRegionFactory.createFromAsset(eyesTextureAtlas, activity, "cut_ch_sho_eyes.png", 0, 0);
+			eyesTextureAtlas.load();
+		}
+
+		if(cutTreeTR==null) {
+			cutTreeTR = BitmapTextureAtlasTextureRegionFactory.createFromAsset(eyesTextureAtlas, activity, "cut_breakable_tree.png", 0, 0);
+			treeTextureAtlas.load();
+		}
+		
+		if(cutBackgroundTR==null) {
+			cutBackgroundTR = BitmapTextureAtlasTextureRegionFactory.createFromAsset(backgroundTextureAtlas, activity, "cut_background.png", 0, 0);
+			backgroundTextureAtlas.load();
+		}
+		
+		if(cutSweatDropTR==null) {
+			cutSweatDropTR = BitmapTextureAtlasTextureRegionFactory.createFromAsset(sweatDropTextureAtlas, activity, "cut_ch_sweatdrop.png", 0, 0);
+			sweatDropTextureAtlas.load();
+		}
+		
+		if(cutSwordSparkle1TR==null) {
+			cutSwordSparkle1TR = BitmapTextureAtlasTextureRegionFactory.createFromAsset(swordSparkle1TextureAtlas, activity, "cut_sword_sparkle1.png", 0, 0);
+			swordSparkle1TextureAtlas.load();
+		}
+		
+		if(cutHudBarTR==null) {
+			cutHudBarTR = BitmapTextureAtlasTextureRegionFactory.createFromAsset(hudBarTextureAtlas, activity, "cut_hud_bar.png", 0, 0);
+			hudBarTextureAtlas.load();
+		}
+		
+		if(cutHudCursorTR==null) {
+			cutHudCursorTR = BitmapTextureAtlasTextureRegionFactory.createFromAsset(hudCursorTextureAtlas, activity, "cut_hud_cursor.png", 0, 0);
+			hudCursorTextureAtlas.load();
+		}
 		
 		
-		
-		
+		// Sonido:
 		
 	}
 	
 	// Liberamos los recursos de la escena de corte:
 	public synchronized void unloadCutSceneResources() {
 	
-		BuildableBitmapTextureAtlas mBitmapTextureAtlas;
-		
-		mBitmapTextureAtlas = (BuildableBitmapTextureAtlas) cut_shoCut.getTexture();
-		mBitmapTextureAtlas.unload();
-		
-		
-		
-		
-		
-		// ... Continue to unload all textures related to the 'Game' scene
-		
-		
+		if(cutShoTR!=null) {
+			if(cutShoTR.getTexture().isLoadedToHardware()) {
+				cutShoTR.getTexture().unload();
+				cutShoTR = null;
+			}
+		}
+		if(cutTreeTR!=null) {
+			if(cutTreeTR.getTexture().isLoadedToHardware()) {
+				cutTreeTR.getTexture().unload();
+				cutTreeTR = null;
+			}
+		}
+		if(cutCandleTR!=null) {
+			if(cutCandleTR.getTexture().isLoadedToHardware()) {
+				cutCandleTR.getTexture().unload();
+				cutCandleTR = null;
+			}
+		}
+		if(cutCandleLightTR!=null) {
+			if(cutCandleLightTR.getTexture().isLoadedToHardware()) {
+				cutCandleLightTR.getTexture().unload();
+				cutCandleLightTR = null;
+			}
+		}		
+		if(cutEyesTR!=null) {
+			if(cutEyesTR.getTexture().isLoadedToHardware()) {
+				cutEyesTR.getTexture().unload();
+				cutEyesTR = null;
+			}
+		}
+		if(cutBackgroundTR!=null) {
+			if(cutBackgroundTR.getTexture().isLoadedToHardware()) {
+				cutBackgroundTR.getTexture().unload();
+				cutBackgroundTR = null;
+			}
+		}
+		if(cutSweatDropTR!=null) {
+			if(cutSweatDropTR.getTexture().isLoadedToHardware()) {
+				cutSweatDropTR.getTexture().unload();
+				cutSweatDropTR = null;
+			}
+		}
+		if(cutSwordSparkle1TR!=null) {
+			if(cutSwordSparkle1TR.getTexture().isLoadedToHardware()) {
+				cutSwordSparkle1TR.getTexture().unload();
+				cutSwordSparkle1TR = null;
+			}
+		}
+		if(cutSwordSparkle2TR!=null) {
+			if(cutSwordSparkle2TR.getTexture().isLoadedToHardware()) {
+				cutSwordSparkle2TR.getTexture().unload();
+				cutSwordSparkle2TR = null;
+			}
+		}
+		if(cutHudBarTR!=null) {
+			if(cutHudBarTR.getTexture().isLoadedToHardware()) {
+				cutHudBarTR.getTexture().unload();
+				cutHudBarTR = null;
+			}
+		}
+		if(cutHudCursorTR!=null) {
+			if(cutHudCursorTR.getTexture().isLoadedToHardware()) {
+				cutHudCursorTR.getTexture().unload();
+				cutHudCursorTR = null;
+			}
+		}
 		
 		// Garbage Collector:
 		System.gc();
@@ -288,17 +404,23 @@ public class ResourceManager {
 	public synchronized void loadFonts(Engine pEngine){
 		FontFactory.setAssetBasePath("fonts/");
 		
-		// Create mFont object via FontFactory class
-		mFont = FontFactory.createFromAsset(pEngine.getFontManager(), pEngine.getTextureManager(), 256, 256, 
-				activity.getAssets(), fontName, 32f, true, org.andengine.util.adt.color.Color.WHITE_ABGR_PACKED_INT);
-
-		mFont.load();
+		// Small = 64
+		fontSmall = FontFactory.createFromAsset(pEngine.getFontManager(), pEngine.getTextureManager(), 256, 256, 
+				activity.getAssets(), "go3v2.ttf", 64f, true, org.andengine.util.adt.color.Color.WHITE_ABGR_PACKED_INT);
+		fontSmall.load();
+		
+		// Big = 128
+		fontBig = FontFactory.createFromAsset(pEngine.getFontManager(), pEngine.getTextureManager(), 256, 256, 
+				activity.getAssets(), "go3v2.ttf", 128f, true, org.andengine.util.adt.color.Color.WHITE_ABGR_PACKED_INT);
+		fontBig.load();	
+		
+		
 	}
 	
 	/* If an unloadFonts() method is necessary, we can provide one
 	 */
 	public synchronized void unloadFonts(){
-		// Similar to textures, we can call unload() to destroy font resources
-		mFont.unload();
+		fontSmall.unload();
+		fontBig.unload();
 	}
 }
