@@ -57,14 +57,13 @@ public class SceneGameCut extends ManagedScene {
 		setBackgroundEnabled(true);
 		
 		// Arbol:
-		
-		Sprite tree = new Sprite(
+		Sprite treeUp = new Sprite(
 				width * 0.5f,
 				height * 0.5f,
 				ResourceManager.getInstance().cutTreeTR,
 				ResourceManager.getInstance().engine.getVertexBufferObjectManager());
 		
-		attachChild(tree);
+		attachChild(treeUp);
 		
 		
 		
