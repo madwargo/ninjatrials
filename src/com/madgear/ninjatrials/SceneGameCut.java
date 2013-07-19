@@ -57,17 +57,17 @@ public class SceneGameCut extends ManagedScene {
 		setBackgroundEnabled(true);
 		
 		// Arbol:
-		Sprite treeUp = new Sprite(
-				width * 0.5f,
-				height * 0.5f,
-				ResourceManager.getInstance().cutTreeTR,
-				ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+		Tree mTree = new Tree(width * 0.5f, height * 0.5f + 400);
+		attachChild(mTree);
+
+		// Faroles:
+		Candle candleLeft = new Candle(width * 0.5f - 500, height * 0.5f + 200);
+		Candle candleRight = new Candle(width * 0.5f + 500, height * 0.5f + 200);
+		attachChild(candleLeft);
+		attachChild(candleRight);
 		
-		attachChild(treeUp);
-		
-		
-		
-		
+	
+	
 	}
 
 	@Override
@@ -82,5 +82,55 @@ public class SceneGameCut extends ManagedScene {
 	public void onUnloadScene() {
 		ResourceManager.getInstance().unloadCutSceneResources();
 	}
-
+	
+	
+	// Clase Arbol:
+	private class Tree extends Entity {
+		private final float gap = 160;  // espacio entre las partes superior y la inferior
+		// calcula el desplazamiento entre las partes
+		private float offset = (ResourceManager.getInstance().cutTreeTopTR.getHeight() / 2f +
+				ResourceManager.getInstance().cutTreeBottomTR.getHeight() / 2f ) - gap;
+		
+		Sprite top, bottom;
+		
+		public Tree(float posX, float posY) {
+			top = new Sprite(posX, posY,
+					ResourceManager.getInstance().cutTreeTopTR,
+					ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+			bottom = new Sprite(posX, posY - offset,
+					ResourceManager.getInstance().cutTreeBottomTR,
+					ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+			attachChild(bottom);
+			attachChild(top);
+		}
+		// Rompe el arbol:
+		public void shatter() {}
+	}
+	
+	
+	// Clase Farol:
+	private class Candle extends Entity {
+		private final float gap = 40;  // espacio entre las partes superior y la inferior
+		// calcula el desplazamiento entre las partes
+		private float offset = (ResourceManager.getInstance().cutCandleTopTR.getHeight() / 2f +
+				ResourceManager.getInstance().cutCandleBottomTR.getHeight() / 2f) - gap;
+		
+		Sprite top, bottom;
+		
+		public Candle(float posX, float posY) {
+			top = new Sprite(posX, posY,
+					ResourceManager.getInstance().cutCandleTopTR,
+					ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+			bottom = new Sprite(posX, posY - offset,
+					ResourceManager.getInstance().cutCandleBottomTR,
+					ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+			attachChild(bottom);
+			attachChild(top);
+		}
+		// Rompe el farol
+		public void shatter() {}
+	}
+	
+	
+	
 }
