@@ -7,21 +7,39 @@ import org.andengine.entity.scene.background.EntityBackground;
 import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.sprite.TiledSprite;
+import org.andengine.entity.text.Text;
+import org.andengine.entity.text.TextOptions;
+import org.andengine.util.adt.align.HorizontalAlign;
 
 
 
 public class SceneGameCut extends ManagedScene {
 
-	// Sin pantalla de Loading...
-	public final boolean hasLoadingScreen = false;
-	
 	// Tiempo total transcurrido
 	float timeCounter = 0;
 	
+	public SceneGameCut(final float f) {
+		super(f);
+	}
+
 	@Override
 	public Scene onLoadingScreenLoadAndShown() {
-		// TODO Auto-generated method stub
-		return null;
+
+		Scene loadingScene = new Scene();
+		loadingScene.getBackground().setColor(0.3f, 0.3f, 0.6f);
+		
+		// Añadimos algo de texto:
+		final Text loadingText = new Text(
+				ResourceManager.getInstance().cameraWidth * 0.5f, 
+				ResourceManager.getInstance().cameraHeight *0.3f,
+				ResourceManager.getInstance().fontBig,
+				"Loading...",
+				new TextOptions(HorizontalAlign.CENTER),
+				ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+
+		loadingScene.attachChild(loadingText);
+		
+		return loadingScene;
 	}
 
 	@Override
@@ -33,7 +51,7 @@ public class SceneGameCut extends ManagedScene {
 	// Cargamos recursos:
 	@Override
 	public void onLoadScene() {
-		getBackground().setColor(0.09804f, 0.6274f, 0.8784f);  // fondo de prueba para ver si carga.
+		//getBackground().setColor(0.09804f, 0.6274f, 0.8784f);  // fondo de prueba para ver si carga.
 
 		//this.setBackground(new SpriteBackground(ResourceManager.getInstance().cut_eyes));
 		ResourceManager.getInstance().loadCutSceneResources();
