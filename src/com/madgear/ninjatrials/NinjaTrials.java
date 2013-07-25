@@ -10,6 +10,8 @@ import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.scene.Scene;
 import org.andengine.ui.activity.BaseGameActivity;
 
+import android.util.Log;
+
 
 
 
@@ -168,6 +170,25 @@ public class NinjaTrials extends BaseGameActivity {
 			System.exit(0);
 		}*/
 	
+	
+	
+
+	@Override
+	public void onBackPressed() {
+		// Log.v("NinjaTrials", "A por pan tesuji");
+	
+		ResourceManager.resetInstance();
+		SceneManager.resetInstance();
+		
+		Log.v("NinjaTrials", "A por pan tesuji");
+		ResourceManager.getInstance();
+		SceneManager.getInstance();
+		
+		ResourceManager.resetInstance();
+		SceneManager.resetInstance();
+		
+		super.onBackPressed();
+	}
 	
 
 }

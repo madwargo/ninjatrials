@@ -33,7 +33,7 @@ import android.util.Log;
 
 public class ResourceManager {
 
-	private static final TextureOptions mTransparentTextureOption = TextureOptions.BILINEAR;
+	private static /*final*/ TextureOptions mTransparentTextureOption = TextureOptions.BILINEAR;
 	
 	
 	// ResourceManager Singleton instance
@@ -117,8 +117,13 @@ public class ResourceManager {
 	public synchronized static ResourceManager getInstance(){
 		if(INSTANCE == null){
 			INSTANCE = new ResourceManager();
+			Log.v("NINJATRIALS", "ResourceManager INSTANCE = Null");
 		}
+		else{
+			Log.v("NINJATRIALS", "ResourceManager INSTANCE = Not Null");
+		}		
 		return INSTANCE;
+		
 	}
 
 	// Cada escena debe tener sus métodos para cargar y descargar recursos (metodo load y unload).
@@ -446,4 +451,28 @@ public class ResourceManager {
 		fontSmall.unload();
 		fontBig.unload();
 	}
+	
+	public static void resetInstance(){
+		
+		mTransparentTextureOption = null;
+		
+		cutShoTR = null;
+		cutTreeTopTR = null;
+		cutTreeBottomTR = null;
+		cutCandleTopTR = null;
+		cutCandleBottomTR = null;
+		cutCandleLightTR = null;
+		cutEyesTR = null;
+		cutBackgroundTR = null;
+		cutSweatDropTR = null;
+		cutSwordSparkle1TR = null;
+		cutSwordSparkle2TR = null;
+		cutHudBarTR = null;
+		cutHudCursorTR = null;
+		
+		INSTANCE = null;
+		
+	}
+	
+	
 }

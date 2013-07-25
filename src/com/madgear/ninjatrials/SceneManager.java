@@ -5,8 +5,12 @@ import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.entity.scene.Scene;
 
+import android.util.Log;
+
 public class SceneManager extends Object
 {
+	
+	/*
 	// Holds the global SceneManager instance.
 	private static final SceneManager INSTANCE = new SceneManager();
 	// ====================================================
@@ -18,6 +22,27 @@ public class SceneManager extends Object
 	public static SceneManager getInstance(){
 		return INSTANCE;
 	}
+	*/
+	
+	// Cambios para dejar el singleton igual que en ResourceManager
+	private static SceneManager INSTANCE;
+	// Constructor:
+	private SceneManager(){
+		// The constructor is of no use to us
+	}
+	public synchronized static SceneManager getInstance(){
+		if(INSTANCE == null){
+			INSTANCE = new SceneManager();
+			Log.v("NINJATRIALS", "SceneManager INSTANCE = Null");
+		}
+		else{
+			Log.v("NINJATRIALS", "SceneManager INSTANCE = Not Null");
+		}		
+		return INSTANCE;
+	}
+	
+	
+	
 
 	// ====================================================
 	// VARIABLES
@@ -186,4 +211,11 @@ public class SceneManager extends Object
 			currentLayer = null;
 		}
 	}
+	
+	
+	// Para machacar la instancia de esta clase al salir del juego
+	public static void resetInstance(){
+		INSTANCE = null;
+	}
+	
 }
