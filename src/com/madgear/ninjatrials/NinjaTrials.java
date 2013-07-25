@@ -168,6 +168,17 @@ public class NinjaTrials extends BaseGameActivity {
 			System.exit(0);
 		}*/
 	
+	@Override
+	public void onBackPressed() {
+		// If the resource manager has been setup...
+		if(ResourceManager.getInstance().engine!=null){
+			
+			SceneManager.getInstance().mCurrentScene.onHideManagedScene();
+			SceneManager.getInstance().mCurrentScene.onUnloadManagedScene();
+			System.exit(0);
+		}
+	}
+		
 	
-
+	
 }
