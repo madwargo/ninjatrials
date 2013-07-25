@@ -122,7 +122,7 @@ public class NinjaTrials extends BaseGameActivity {
 			OnPopulateSceneCallback pOnPopulateSceneCallback) {
 		
 		// Iniciamos a la primera escena:
-		SceneManager.getInstance().showScene(new SceneGameCut(3f));
+		SceneManager.getInstance().showScene(new SceneGameCut());
 		
 		pOnPopulateSceneCallback.onPopulateSceneFinished();
 	}
@@ -150,13 +150,13 @@ public class NinjaTrials extends BaseGameActivity {
 	}
 
 
-	// Liberamos la memoria:
+/*	// Liberamos la memoria:
 	public void onUnloadResources () {
 		
 		ResourceManager.getInstance().unloadFonts();
 
 		
-	}
+	}*/
 	
 	
 	// Esto finaliza el juego:

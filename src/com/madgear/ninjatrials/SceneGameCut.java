@@ -18,8 +18,8 @@ public class SceneGameCut extends ManagedScene {
 	// Tiempo total transcurrido
 	float timeCounter = 0;
 	
-	public SceneGameCut(final float f) {
-		super(f);
+	public SceneGameCut() {
+		super(1f);
 	}
 
 	@Override
