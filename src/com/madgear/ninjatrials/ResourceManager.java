@@ -157,7 +157,10 @@ public class ResourceManager {
 		cutCandleBottomTR = TextureRegionFactory.extractFromTexture(cutCandleT, 0, 516, 310, 344, false);		
 		
 		// Luz del farol:
-		// cutCandleLightTR = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(candleLightTextureAtlas, context, "cut_breakable_candle_light.png", 2, 1);
+		BitmapTextureAtlas cutCandleLightT = new BitmapTextureAtlas(textureManager, 760, 380, mTransparentTextureOption);
+		ITextureRegion cutCandleLightAllTR = BitmapTextureAtlasTextureRegionFactory.createFromAsset(cutCandleLightT, activity, "cut_breakable_candle_light.png", 0, 0);
+		cutCandleLightT.load();
+		cutCandleLightTR = TextureRegionFactory.extractFromTexture(cutCandleLightT, 0, 0, 388, 380, false);
 
 		// Espada 2:
 		if(cutShoTR==null) {
@@ -220,7 +223,7 @@ public class ResourceManager {
 	// Liberamos los recursos de la escena de corte:
 	public synchronized void unloadCutSceneResources() {
 	
-		if(cutShoTR!=null) {
+		if(cutShoTR != null) {
 			if(cutShoTR.getTexture().isLoadedToHardware()) {
 				cutShoTR.getTexture().unload();
 				cutShoTR = null;

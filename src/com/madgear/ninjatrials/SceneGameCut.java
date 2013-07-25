@@ -133,7 +133,7 @@ public class SceneGameCut extends ManagedScene {
 		private float offset = (ResourceManager.getInstance().cutCandleTopTR.getHeight() / 2f +
 				ResourceManager.getInstance().cutCandleBottomTR.getHeight() / 2f) - gap;
 		
-		Sprite top, bottom;
+		Sprite top, bottom, light;
 		
 		public Candle(float posX, float posY) {
 			top = new Sprite(posX, posY,
@@ -142,8 +142,14 @@ public class SceneGameCut extends ManagedScene {
 			bottom = new Sprite(posX, posY - offset,
 					ResourceManager.getInstance().cutCandleBottomTR,
 					ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+			light = new Sprite(posX, posY,
+					ResourceManager.getInstance().cutCandleLightTR,
+					ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+			light.setAlpha(0.6f);
+			
 			attachChild(bottom);
 			attachChild(top);
+			attachChild(light);
 		}
 		// Rompe el farol
 		public void shatter() {}
