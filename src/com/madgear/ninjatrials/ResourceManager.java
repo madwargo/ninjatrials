@@ -51,6 +51,7 @@ public class ResourceManager {
 	public TextureManager textureManager;
 	
 	
+	
 	// CUT SCENE:
 	public static ITiledTextureRegion cutShoTR;
 	public static ITextureRegion cutTreeTopTR;

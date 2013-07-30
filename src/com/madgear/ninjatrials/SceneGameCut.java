@@ -3,19 +3,28 @@ package com.madgear.ninjatrials;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.entity.Entity;
+import org.andengine.entity.modifier.DelayModifier;
+import org.andengine.entity.modifier.FadeInModifier;
+import org.andengine.entity.modifier.FadeOutModifier;
+import org.andengine.entity.modifier.SequenceEntityModifier;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.SpriteBackground;
+import org.andengine.entity.sprite.AnimatedSprite;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.sprite.TiledSprite;
 import org.andengine.entity.text.Text;
 import org.andengine.entity.text.TextOptions;
 import org.andengine.util.adt.align.HorizontalAlign;
 
+import android.util.Log;
+
+import com.madgear.ninjatrials.ResourceManager;
+
 
 
 public class SceneGameCut extends ManagedScene {
 
-	float timeMax = 10;				// Tiempo máximo para corte:
+	float timeMax = 5;				// Tiempo máximo para corte:
 	float timeCounter = timeMax;	// Tiempo total que queda para el corte
 	float
 		width = ResourceManager.getInstance().cameraWidth,
@@ -27,6 +36,8 @@ public class SceneGameCut extends ManagedScene {
 	HUD pHUD;
 	PowerBar mPowerBar;
 	public Text countingText;
+	Character mCharacter;
+	Eyes mEyes;
 
 
 	
@@ -101,34 +112,48 @@ public class SceneGameCut extends ManagedScene {
 		
 		// Crono de prueba:
 		countingText = new Text(
-				ResourceManager.getInstance().cameraWidth * 0.5f, 
-				ResourceManager.getInstance().cameraHeight * 0.3f,
+				ResourceManager.getInstance().cameraWidth -200, 
+				ResourceManager.getInstance().cameraHeight -200,
 				ResourceManager.getInstance().fontSmall,
 				"00.00",
 				"00.00".length(),
-				new TextOptions(HorizontalAlign.CENTER),
+				new TextOptions(HorizontalAlign.LEFT),
 				ResourceManager.getInstance().engine.getVertexBufferObjectManager());
 
+		countingText.setColor(0.6f, 0.4f, 0.4f);
 		attachChild(countingText);
 	
+		
+		// Personaje:
+		mCharacter = new Character(width/2-150, height/2);
+		attachChild(mCharacter);
+		
+		// Ojos:
+		mEyes = new Eyes();
+		attachChild(mEyes);
+		
 		
 		// Controlarmos desfase de tiempo (se restará en el primer update):
 		timeCounter += ResourceManager.getInstance().engine.getSecondsElapsedTotal();
 		
 		// Update:
 		registerUpdateHandler(new IUpdateHandler() {
+
 			// Por cada update movemos el cursor a su posición y comprobamos si se acabó el tiempo:
 			@Override
 			public void onUpdate(float pSecondsElapsed) {
 				
-				if(timeCounter <= 0)
-					timeOut();  // Si el tiempo llega a 0 timeout!
+				if(timeCounter <= 0) {
+					countingText.setText("0.00");
+					mCharacter.cut();
+					mEyes.cut();
+					//timeOut();  // Si el tiempo llega a 0 timeout!
+					//SceneGameCut.this.unregisterUpdateHandler(this);
+				}
 				else {
 					timeCounter -= pSecondsElapsed;
 					mPowerBar.updateCursorPos(pSecondsElapsed);
-					
-					countingText.setText(String.valueOf(
-							Math.round(timeCounter)));
+					countingText.setText(String.format("%2.2f", timeCounter));
 				}
 				
 			}
@@ -156,6 +181,11 @@ public class SceneGameCut extends ManagedScene {
 	
 	// Se acabó el tiempo!!
 	public void timeOut(){
+		countingText.setText("0.00");
+		mCharacter.cut();
+		mEyes.cut();
+		
+		//clearUpdateHandlers();
 		
 	}
 	
@@ -217,6 +247,7 @@ public class SceneGameCut extends ManagedScene {
 	}
 	
 	
+	// Clase barra de energía:
 	private class PowerBar extends Entity {
 		final float timeRound = 1f; 	// nº de segundos que tarda en hacer un ciclo el cursor
 		final float cursorMin = 0f;
@@ -250,5 +281,55 @@ public class SceneGameCut extends ManagedScene {
 		}
 	}
 	
+	
+	// Clase personaje:
+	private class Character extends Entity {
+		AnimatedSprite charSprite;
+		
+		public Character(float posX, float posY) {
+			charSprite = new AnimatedSprite(posX, posY,
+					ResourceManager.getInstance().cutShoTR,
+					ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+			attachChild(charSprite);
+		}
+		
+		public void cut() {
+			Log.i("cut", "cut!");
+			charSprite.animate(new long[] {100, 500, 600, 700}, 0, 3, false);
+		}
+		
+	}
+	
+	
+	// Clase para los ojos:
+	private class Eyes extends Entity {
+		Sprite eyesSprite;
+		
+		// Secuencia para los ojos:
+		DelayModifier delayModifier = new DelayModifier(1f);
+		FadeInModifier fadeInModifier = new FadeInModifier(0.5f);
+		FadeOutModifier fadeOutModifier = new FadeOutModifier(0.5f);
+		SequenceEntityModifier sequenceEntityModifier =
+				new SequenceEntityModifier(fadeInModifier, fadeOutModifier, fadeInModifier, fadeOutModifier);
+		
+		public Eyes() {
+			eyesSprite = new Sprite(width/2, height/2,
+					ResourceManager.getInstance().cutEyesTR,
+					ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+			eyesSprite.setAlpha(0f);  // inicialmente no se ven.
+			attachChild(eyesSprite);	
+		
+		}
+		
+		public void cut() {
+			eyesSprite.registerEntityModifier(sequenceEntityModifier);
+		}
+	}
 
+	
+	
 }
+
+
+
+

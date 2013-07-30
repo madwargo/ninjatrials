@@ -12,6 +12,15 @@ public class GameManager {
 	private static final int INITIAL_BIRD_COUNT = 3;
 	private static final int INITIAL_ENEMY_COUNT = 5;
 	
+	
+	
+	// GENERAL:
+	public static final int CHAR_RYOKO = 0;
+	public static final int CHAR_SHO = 1;
+	public int selectedCharacter = CHAR_SHO;	// Personaje seleccionado en el juego.
+	
+	
+	
 	/* The game manager should keep track of certain data involved in
 	 * our game. This particular game manager holds data for score, bird
 	 * counts and enemy counts.
