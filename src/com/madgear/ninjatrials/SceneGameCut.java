@@ -148,7 +148,7 @@ public class SceneGameCut extends ManagedScene {
 					mCharacter.cut();
 					mEyes.cut();
 					//timeOut();  // Si el tiempo llega a 0 timeout!
-					//SceneGameCut.this.unregisterUpdateHandler(this);
+					SceneGameCut.this.unregisterUpdateHandler(this);
 				}
 				else {
 					timeCounter -= pSecondsElapsed;
@@ -309,8 +309,10 @@ public class SceneGameCut extends ManagedScene {
 		DelayModifier delayModifier = new DelayModifier(1f);
 		FadeInModifier fadeInModifier = new FadeInModifier(0.5f);
 		FadeOutModifier fadeOutModifier = new FadeOutModifier(0.5f);
+		FadeInModifier fadeInModifier2 = new FadeInModifier(0.5f);
+		FadeOutModifier fadeOutModifier2 = new FadeOutModifier(0.5f);
 		SequenceEntityModifier sequenceEntityModifier =
-				new SequenceEntityModifier(fadeInModifier, fadeOutModifier, fadeInModifier, fadeOutModifier);
+				new SequenceEntityModifier(fadeInModifier, fadeOutModifier, fadeInModifier2, fadeOutModifier2);
 		
 		public Eyes() {
 			eyesSprite = new Sprite(width/2, height/2,
