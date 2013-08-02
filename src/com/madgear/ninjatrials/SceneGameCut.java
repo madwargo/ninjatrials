@@ -144,16 +144,14 @@ public class SceneGameCut extends ManagedScene {
 			public void onUpdate(float pSecondsElapsed) {
 				
 				if(timeCounter <= 0) {
-					countingText.setText("0.00");
-					mCharacter.cut();
-					mEyes.cut();
-					//timeOut();  // Si el tiempo llega a 0 timeout!
+					timeOut();  // Si el tiempo llega a 0 timeout!
 					SceneGameCut.this.unregisterUpdateHandler(this);
 				}
 				else {
+					countingText.setText(String.format("%2.2f", timeCounter));  // Pintamos al inicio para no tener tiempo negativo
 					timeCounter -= pSecondsElapsed;
 					mPowerBar.updateCursorPos(pSecondsElapsed);
-					countingText.setText(String.format("%2.2f", timeCounter));
+					
 				}
 				
 			}
@@ -178,15 +176,25 @@ public class SceneGameCut extends ManagedScene {
 	}
 	
 	
+	// Secuencia de corte: 
+	public void cut() {
+		mCharacter.cut();
+		mEyes.cut();
+	}
+	
+	
 	
 	// Se acabó el tiempo!!
 	public void timeOut(){
 		countingText.setText("0.00");
-		mCharacter.cut();
-		mEyes.cut();
-		
-		//clearUpdateHandlers();
-		
+		cut(); //provisional
+	}
+	
+	
+	// Puntuación:
+	// score = [100 - abs(curorValue)]*0.8 - tiempo * 0.2
+	public int score() {
+		return Math.round((100 - Math.abs(mPowerBar.getValue()))*0.8f - (timeCounter * 0.2f));
 	}
 	
 	
@@ -279,6 +287,11 @@ public class SceneGameCut extends ManagedScene {
 			if(cursorValue >= cursorMax) direction = -1;
 			if(cursorValue <= cursorMin) direction = 1;
 		}
+		
+		// Devuelve un valor entre -100 y 100, siendo 0 el valor óptimo;
+		public int getValue() {
+			return Math.round(cursorValue) - 100;
+		}
 	}
 	
 	
@@ -307,12 +320,13 @@ public class SceneGameCut extends ManagedScene {
 		
 		// Secuencia para los ojos:
 		DelayModifier delayModifier = new DelayModifier(1f);
-		FadeInModifier fadeInModifier = new FadeInModifier(0.5f);
-		FadeOutModifier fadeOutModifier = new FadeOutModifier(0.5f);
-		FadeInModifier fadeInModifier2 = new FadeInModifier(0.5f);
-		FadeOutModifier fadeOutModifier2 = new FadeOutModifier(0.5f);
+		DelayModifier delayModifier2 = new DelayModifier(0.6f);
+		FadeInModifier fadeInModifier = new FadeInModifier(0.2f);
+		FadeOutModifier fadeOutModifier = new FadeOutModifier(0.2f);
+
 		SequenceEntityModifier sequenceEntityModifier =
-				new SequenceEntityModifier(fadeInModifier, fadeOutModifier, fadeInModifier2, fadeOutModifier2);
+				new SequenceEntityModifier(delayModifier, fadeInModifier, delayModifier2, fadeOutModifier);
+		// Los modificadores de secuencia *no* pueden repetirse
 		
 		public Eyes() {
 			eyesSprite = new Sprite(width/2, height/2,
@@ -329,6 +343,10 @@ public class SceneGameCut extends ManagedScene {
 	}
 
 	
+	// Katanas:
+	private class Katanas extends Entity {
+		
+	}
 	
 }
 
