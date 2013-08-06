@@ -125,14 +125,12 @@ public class SceneGameCut extends ManagedScene {
 				ResourceManager.getInstance().cameraWidth -200, 
 				ResourceManager.getInstance().cameraHeight -200,
 				ResourceManager.getInstance().fontMedium,
-				"00.00",
-				"00.00".length(),
+				String.format("%2.2f", timeCounter),
+				String.format("%2.2f", timeCounter).length(),
 				//new TextOptions(HorizontalAlign.LEFT),
 				ResourceManager.getInstance().engine.getVertexBufferObjectManager());
-
-		countingText.setColor(0.6f, 0.3f, 0f);
+		//countingText.setColor(0.5f, 0.5f, 0f);
 		pHUD.attachChild(countingText);
-	
 		
 		// Personaje:
 		mCharacter = new Character(width/2-120, height/2);
@@ -163,8 +161,8 @@ public class SceneGameCut extends ManagedScene {
 			@Override
 			public void onUpdate(float pSecondsElapsed) {
 				if(timeCounter <= 0) {
-					timeOut();  // Si el tiempo llega a 0 timeout!
 					SceneGameCut.this.unregisterUpdateHandler(this);
+					timeOut();  // Si el tiempo llega a 0 timeout!
 				}
 				else {
 					countingText.setText(String.format("%2.2f", timeCounter));  // Pintamos al inicio para no tener tiempo negativo
