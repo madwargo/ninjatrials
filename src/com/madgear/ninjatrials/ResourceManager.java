@@ -72,6 +72,7 @@ public class ResourceManager {
 	
 	// FONTS:
 	public Font fontSmall;		// pequeño
+	public Font fontMedium;		// mediano
 	public Font fontBig;		// grande
 	
 	
@@ -432,13 +433,24 @@ public class ResourceManager {
 		FontFactory.setAssetBasePath("fonts/");
 		
 		// Small = 64
-		fontSmall = FontFactory.createFromAsset(pEngine.getFontManager(), pEngine.getTextureManager(), 256, 256, 
-				activity.getAssets(), "go3v2.ttf", 64f, true, org.andengine.util.adt.color.Color.WHITE_ABGR_PACKED_INT);
+		fontSmall = FontFactory.createStrokeFromAsset(pEngine.getFontManager(), pEngine.getTextureManager(), 512, 512, 
+				activity.getAssets(), "go3v2.ttf", 64f, true,
+				android.graphics.Color.WHITE,
+				3, android.graphics.Color.RED);
 		fontSmall.load();
 		
+		// Medium = 96
+		fontMedium = FontFactory.createStrokeFromAsset(pEngine.getFontManager(), pEngine.getTextureManager(), 1024, 1024, 
+				activity.getAssets(), "go3v2.ttf", 96f, true,
+				android.graphics.Color.WHITE,
+				3, android.graphics.Color.RED);
+		fontMedium.load();			
+		
 		// Big = 128
-		fontBig = FontFactory.createFromAsset(pEngine.getFontManager(), pEngine.getTextureManager(), 256, 256, 
-				activity.getAssets(), "go3v2.ttf", 128f, true, org.andengine.util.adt.color.Color.WHITE_ABGR_PACKED_INT);
+		fontBig = FontFactory.createStrokeFromAsset(pEngine.getFontManager(), pEngine.getTextureManager(), 1024, 1024, 
+				activity.getAssets(), "go3v2.ttf", 128f, true,
+				android.graphics.Color.WHITE,
+				3, android.graphics.Color.RED);
 		fontBig.load();	
 		
 		
@@ -448,6 +460,7 @@ public class ResourceManager {
 	 */
 	public synchronized void unloadFonts(){
 		fontSmall.unload();
+		fontMedium.unload();
 		fontBig.unload();
 	}
 }

@@ -120,19 +120,18 @@ public class SceneGameCut extends ManagedScene {
 		mPowerBar = new PowerBar(200f, 200f);
 		pHUD.attachChild(mPowerBar);
 	
-		
 		// Crono de prueba:
 		countingText = new Text(
 				ResourceManager.getInstance().cameraWidth -200, 
 				ResourceManager.getInstance().cameraHeight -200,
-				ResourceManager.getInstance().fontSmall,
+				ResourceManager.getInstance().fontMedium,
 				"00.00",
 				"00.00".length(),
 				//new TextOptions(HorizontalAlign.LEFT),
 				ResourceManager.getInstance().engine.getVertexBufferObjectManager());
 
-		countingText.setColor(0.6f, 0.6f, 0.2f);
-		attachChild(countingText);
+		countingText.setColor(0.6f, 0.3f, 0f);
+		pHUD.attachChild(countingText);
 	
 		
 		// Personaje:
@@ -194,9 +193,9 @@ public class SceneGameCut extends ManagedScene {
 	
 	// Destello:
 	public void blink() {
-		blinkLayer.setAlpha(0.95f);
+		blinkLayer.setAlpha(0.9f);
 		blinkLayer.registerEntityModifier(new SequenceEntityModifier (
-				new DelayModifier(0.6f), new FadeOutModifier(4f)));
+				new DelayModifier(0.6f), new FadeOutModifier(5f)));
 	}
 	
 	// Secuencia de corte:
@@ -208,7 +207,7 @@ public class SceneGameCut extends ManagedScene {
             @Override
             public void onTimePassed(final TimerHandler pTimerHandler)
             {          
-            	pTimerHandler.reset();  // esto hace que se repita el timer de nuevo
+            	pTimerHandler.reset();  // esto hace que se repita el timer de nuevo cada 0.1 seg
             	
             	if(secuenceNum == 10) mEyes.cut();
             	if(secuenceNum == 14) mCharacter.cut();
@@ -266,7 +265,7 @@ public class SceneGameCut extends ManagedScene {
 		}
 		// Rompe el arbol:
 		public void cut() {
-			top.registerEntityModifier(new MoveModifier(20, top.getX(), top.getY(), top.getX()-100, top.getY()-50));
+			top.registerEntityModifier(new MoveModifier(15, top.getX(), top.getY(), top.getX()-100, top.getY()-50));
 		}
 	}
 	
