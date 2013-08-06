@@ -215,11 +215,13 @@ public class SceneGameCut extends ManagedScene {
             	if(secuenceNum == 16) blink();
             	if(secuenceNum == 18) mKatana.cutRight();
             	if(secuenceNum == 21) mKatana.cutLeft();
+            	if(secuenceNum == 24) mKatana.cutCenter();
             	if(secuenceNum == 45) {
             		mTree.cut();
             		candleLeft.cut();
             		candleRight.cut();
             	}
+            	if(secuenceNum == 100) SceneGameCut.this.unregisterUpdateHandler(pTimerHandler);
             	
             	secuenceNum += 1; // Avanzamos la secuencia (decimas de segundo)
             }
@@ -389,6 +391,8 @@ public class SceneGameCut extends ManagedScene {
 	private class Katana extends Entity {
 		AnimatedSprite katanaSpriteRight;
 		AnimatedSprite katanaSpriteLeft;
+		Sprite katanaSpriteCenter;
+		
 		long[] katanaAnimTime =  {50, 50, 50, 50};
 		
 		public Katana() {
@@ -406,6 +410,14 @@ public class SceneGameCut extends ManagedScene {
 			katanaSpriteLeft.setAlpha(0f);
 			katanaSpriteLeft.setFlipped(true, true);
 			attachChild(katanaSpriteLeft);
+			
+			// Katana central (arbol):
+			katanaSpriteCenter = new Sprite(width/2, height/2 + 300,
+					ResourceManager.getInstance().cutSwordSparkle1TR,
+					ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+			katanaSpriteCenter.setAlpha(0f);  // inicialmente no se ve.
+			katanaSpriteCenter.setFlippedHorizontal(true);
+			attachChild(katanaSpriteCenter);		
 		}
 		
 		public void cutRight() {
@@ -419,6 +431,11 @@ public class SceneGameCut extends ManagedScene {
 					new FadeInModifier(0.05f), new DelayModifier(0.4f), new FadeOutModifier(0.1f)));
 			katanaSpriteLeft.animate(katanaAnimTime, 0, 3, false);
 		}		
+		
+		public void cutCenter() {
+			katanaSpriteCenter.registerEntityModifier(new SequenceEntityModifier(
+					new FadeInModifier(0.1f), new DelayModifier(0.2f), new FadeOutModifier(0.1f)));
+		}
 	}
 	
 	
