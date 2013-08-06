@@ -8,6 +8,10 @@ import org.andengine.entity.Entity;
 import org.andengine.entity.modifier.DelayModifier;
 import org.andengine.entity.modifier.FadeInModifier;
 import org.andengine.entity.modifier.FadeOutModifier;
+import org.andengine.entity.modifier.JumpModifier;
+import org.andengine.entity.modifier.MoveModifier;
+import org.andengine.entity.modifier.ParallelEntityModifier;
+import org.andengine.entity.modifier.RotationByModifier;
 import org.andengine.entity.modifier.SequenceEntityModifier;
 import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.Scene;
@@ -132,7 +136,7 @@ public class SceneGameCut extends ManagedScene {
 	
 		
 		// Personaje:
-		mCharacter = new Character(width/2-130, height/2);
+		mCharacter = new Character(width/2-120, height/2);
 		attachChild(mCharacter);
 		
 		// Ojos:
@@ -190,8 +194,9 @@ public class SceneGameCut extends ManagedScene {
 	
 	// Destello:
 	public void blink() {
-		blinkLayer.setAlpha(0.9f);
-		blinkLayer.registerEntityModifier(new SequenceEntityModifier (new FadeOutModifier(4f)));
+		blinkLayer.setAlpha(0.95f);
+		blinkLayer.registerEntityModifier(new SequenceEntityModifier (
+				new DelayModifier(0.6f), new FadeOutModifier(4f)));
 	}
 	
 	// Secuencia de corte:
@@ -209,7 +214,7 @@ public class SceneGameCut extends ManagedScene {
             	if(secuenceNum == 14) mCharacter.cut();
             	if(secuenceNum == 16) blink();
             	if(secuenceNum == 18) mKatana.cutRight();
-            	if(secuenceNum == 25) mKatana.cutLeft();
+            	if(secuenceNum == 21) mKatana.cutLeft();
             	if(secuenceNum == 45) {
             		mTree.cut();
             		candleLeft.cut();
@@ -258,7 +263,9 @@ public class SceneGameCut extends ManagedScene {
 			attachChild(top);
 		}
 		// Rompe el arbol:
-		public void cut() {}
+		public void cut() {
+			top.registerEntityModifier(new MoveModifier(20, top.getX(), top.getY(), top.getX()-100, top.getY()-50));
+		}
 	}
 	
 	
@@ -289,7 +296,14 @@ public class SceneGameCut extends ManagedScene {
 
 		}
 		// Rompe el farol
-		public void cut() {}
+		public void cut() {
+			light.setVisible(false);
+			// Rompemos el farol con valores aleatorios para posicion final y rotación:
+			top.registerEntityModifier(new ParallelEntityModifier(
+					new JumpModifier(3f, top.getX(), top.getX()+(float)Math.random()*600-300,
+							top.getY(), top.getY()-400, 100f),
+					new RotationByModifier(2f, (float)Math.random()*180)));
+		}
 	}
 	
 	
@@ -345,7 +359,7 @@ public class SceneGameCut extends ManagedScene {
 		}
 		
 		public void cut() {
-			charSprite.animate(new long[] {100, 1000, 100, 1000}, 0, 3, false);
+			charSprite.animate(new long[] {100, 50, 50, 1000}, 0, 3, false);
 		}
 		
 	}
