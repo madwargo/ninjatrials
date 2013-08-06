@@ -164,9 +164,9 @@ public class ResourceManager {
 		cutCandleLightTR = TextureRegionFactory.extractFromTexture(cutCandleLightT, 0, 0, 388, 380, false);
 
 		// Espada 2:
-		if(cutShoTR==null) {
+		if(cutSwordSparkle2TR==null) {
 			BuildableBitmapTextureAtlas cutSword2T = new BuildableBitmapTextureAtlas(textureManager, 1358, 1034, mTransparentTextureOption);
-			cutShoTR = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(cutSword2T, context, "cut_sword_sparkle2.png", 2, 2);
+			cutSwordSparkle2TR = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(cutSword2T, context, "cut_sword_sparkle2.png", 2, 2);
 			try {
 				cutSword2T.build(new BlackPawnTextureAtlasBuilder<IBitmapTextureAtlasSource, BitmapTextureAtlas>(0, 0, 0));
 			} catch (TextureAtlasBuilderException e) { e.printStackTrace(); }

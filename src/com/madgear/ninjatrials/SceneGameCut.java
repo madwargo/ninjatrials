@@ -2,14 +2,18 @@ package com.madgear.ninjatrials;
 
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.handler.IUpdateHandler;
+import org.andengine.engine.handler.timer.ITimerCallback;
+import org.andengine.engine.handler.timer.TimerHandler;
 import org.andengine.entity.Entity;
 import org.andengine.entity.modifier.DelayModifier;
 import org.andengine.entity.modifier.FadeInModifier;
 import org.andengine.entity.modifier.FadeOutModifier;
 import org.andengine.entity.modifier.SequenceEntityModifier;
+import org.andengine.entity.primitive.Rectangle;
 import org.andengine.entity.scene.Scene;
 import org.andengine.entity.scene.background.SpriteBackground;
 import org.andengine.entity.sprite.AnimatedSprite;
+import org.andengine.entity.sprite.AnimatedSprite.IAnimationListener;
 import org.andengine.entity.sprite.Sprite;
 import org.andengine.entity.sprite.TiledSprite;
 import org.andengine.entity.text.Text;
@@ -24,21 +28,24 @@ import com.madgear.ninjatrials.ResourceManager;
 
 public class SceneGameCut extends ManagedScene {
 
-	float timeMax = 5;				// Tiempo máximo para corte:
+	float timeMax = 2;				// Tiempo máximo para corte:
 	float timeCounter = timeMax;	// Tiempo total que queda para el corte
-	float
-		width = ResourceManager.getInstance().cameraWidth,
-		height = ResourceManager.getInstance().cameraHeight;
+	int score; 						// puntuación 
+	int secuenceNum = 0;  		// Contador para la animación de corte
 	
+	float width = ResourceManager.getInstance().cameraWidth;
+	float height = ResourceManager.getInstance().cameraHeight;
+
 	SpriteBackground bg;
 	Tree mTree;
 	Candle candleLeft, candleRight;
 	HUD pHUD;
 	PowerBar mPowerBar;
-	public Text countingText;
+	Text countingText;
 	Character mCharacter;
 	Eyes mEyes;
-
+	Katana mKatana;
+	Rectangle blinkLayer;  // capa para el destello
 
 	
 	public SceneGameCut() {
@@ -46,9 +53,9 @@ public class SceneGameCut extends ManagedScene {
 	}
 
 	@Override
-	public Scene onLoadingScreenLoadAndShown() {
+	public Scene onLoadingScreenLoadAndShown() {  
 
-		Scene loadingScene = new Scene();
+		Scene loadingScene = new Scene(); // Provisional, sera una clase externa
 		loadingScene.getBackground().setColor(0.3f, 0.3f, 0.6f);
 		
 		// Añadimos algo de texto:
@@ -117,20 +124,31 @@ public class SceneGameCut extends ManagedScene {
 				ResourceManager.getInstance().fontSmall,
 				"00.00",
 				"00.00".length(),
-				new TextOptions(HorizontalAlign.LEFT),
+				//new TextOptions(HorizontalAlign.LEFT),
 				ResourceManager.getInstance().engine.getVertexBufferObjectManager());
 
-		countingText.setColor(0.6f, 0.4f, 0.4f);
+		countingText.setColor(0.6f, 0.6f, 0.2f);
 		attachChild(countingText);
 	
 		
 		// Personaje:
-		mCharacter = new Character(width/2-150, height/2);
+		mCharacter = new Character(width/2-130, height/2);
 		attachChild(mCharacter);
 		
 		// Ojos:
 		mEyes = new Eyes();
 		attachChild(mEyes);
+		
+		// Destello:
+		blinkLayer = new Rectangle(width/2, height/2, width, height,
+				ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+		blinkLayer.setAlpha(0f);
+		blinkLayer.setColor(1.0f, 1.0f, 1.0f); // blanco
+		attachChild(blinkLayer);
+
+		// Corte Katana:
+		mKatana = new Katana();
+		attachChild(mKatana);
 		
 		
 		// Controlarmos desfase de tiempo (se restará en el primer update):
@@ -138,11 +156,9 @@ public class SceneGameCut extends ManagedScene {
 		
 		// Update:
 		registerUpdateHandler(new IUpdateHandler() {
-
 			// Por cada update movemos el cursor a su posición y comprobamos si se acabó el tiempo:
 			@Override
 			public void onUpdate(float pSecondsElapsed) {
-				
 				if(timeCounter <= 0) {
 					timeOut();  // Si el tiempo llega a 0 timeout!
 					SceneGameCut.this.unregisterUpdateHandler(this);
@@ -150,12 +166,9 @@ public class SceneGameCut extends ManagedScene {
 				else {
 					countingText.setText(String.format("%2.2f", timeCounter));  // Pintamos al inicio para no tener tiempo negativo
 					timeCounter -= pSecondsElapsed;
-					mPowerBar.updateCursorPos(pSecondsElapsed);
-					
+					mPowerBar.updateCursorPos(pSecondsElapsed);	
 				}
-				
 			}
-			
 			@Override public void reset() {}
 		});
 	}
@@ -175,13 +188,38 @@ public class SceneGameCut extends ManagedScene {
 		ResourceManager.getInstance().unloadCutSceneResources();
 	}
 	
-	
-	// Secuencia de corte: 
-	public void cut() {
-		mCharacter.cut();
-		mEyes.cut();
+	// Destello:
+	public void blink() {
+		blinkLayer.setAlpha(0.9f);
+		blinkLayer.registerEntityModifier(new SequenceEntityModifier (new FadeOutModifier(4f)));
 	}
 	
+	// Secuencia de corte:
+	// Hay que lanzar cada animación en el tiempo correcto.
+	public void cut() {
+		secuenceNum = 0;
+		registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback()
+        {                      
+            @Override
+            public void onTimePassed(final TimerHandler pTimerHandler)
+            {          
+            	pTimerHandler.reset();  // esto hace que se repita el timer de nuevo
+            	
+            	if(secuenceNum == 10) mEyes.cut();
+            	if(secuenceNum == 14) mCharacter.cut();
+            	if(secuenceNum == 16) blink();
+            	if(secuenceNum == 18) mKatana.cutRight();
+            	if(secuenceNum == 25) mKatana.cutLeft();
+            	if(secuenceNum == 45) {
+            		mTree.cut();
+            		candleLeft.cut();
+            		candleRight.cut();
+            	}
+            	
+            	secuenceNum += 1; // Avanzamos la secuencia (decimas de segundo)
+            }
+        }));
+	}
 	
 	
 	// Se acabó el tiempo!!
@@ -192,9 +230,9 @@ public class SceneGameCut extends ManagedScene {
 	
 	
 	// Puntuación:
-	// score = [100 - abs(curorValue)]*0.8 - tiempo * 0.2
+	// score (0-100) = valor power (0-100) - penalizacion por tiempo (segundos transcurridos x3)
 	public int score() {
-		return Math.round((100 - Math.abs(mPowerBar.getValue()))*0.8f - (timeCounter * 0.2f));
+		return Math.round(mPowerBar.getPowerValue() - (timeCounter * 3));
 	}
 	
 	
@@ -220,7 +258,7 @@ public class SceneGameCut extends ManagedScene {
 			attachChild(top);
 		}
 		// Rompe el arbol:
-		public void shatter() {}
+		public void cut() {}
 	}
 	
 	
@@ -251,7 +289,7 @@ public class SceneGameCut extends ManagedScene {
 
 		}
 		// Rompe el farol
-		public void shatter() {}
+		public void cut() {}
 	}
 	
 	
@@ -288,9 +326,9 @@ public class SceneGameCut extends ManagedScene {
 			if(cursorValue <= cursorMin) direction = 1;
 		}
 		
-		// Devuelve un valor entre -100 y 100, siendo 0 el valor óptimo;
-		public int getValue() {
-			return Math.round(cursorValue) - 100;
+		// Devuelve un valor entre 0 y 100, siendo 100 el valor optimo
+		public int getPowerValue() {
+			return 100 - Math.abs(Math.round(cursorValue) - 100);
 		}
 	}
 	
@@ -307,8 +345,7 @@ public class SceneGameCut extends ManagedScene {
 		}
 		
 		public void cut() {
-			Log.i("cut", "cut!");
-			charSprite.animate(new long[] {100, 500, 600, 700}, 0, 3, false);
+			charSprite.animate(new long[] {100, 1000, 100, 1000}, 0, 3, false);
 		}
 		
 	}
@@ -317,16 +354,6 @@ public class SceneGameCut extends ManagedScene {
 	// Clase para los ojos:
 	private class Eyes extends Entity {
 		Sprite eyesSprite;
-		
-		// Secuencia para los ojos:
-		DelayModifier delayModifier = new DelayModifier(1f);
-		DelayModifier delayModifier2 = new DelayModifier(0.6f);
-		FadeInModifier fadeInModifier = new FadeInModifier(0.2f);
-		FadeOutModifier fadeOutModifier = new FadeOutModifier(0.2f);
-
-		SequenceEntityModifier sequenceEntityModifier =
-				new SequenceEntityModifier(delayModifier, fadeInModifier, delayModifier2, fadeOutModifier);
-		// Los modificadores de secuencia *no* pueden repetirse
 		
 		public Eyes() {
 			eyesSprite = new Sprite(width/2, height/2,
@@ -338,15 +365,49 @@ public class SceneGameCut extends ManagedScene {
 		}
 		
 		public void cut() {
-			eyesSprite.registerEntityModifier(sequenceEntityModifier);
+			eyesSprite.registerEntityModifier(new SequenceEntityModifier(
+					new FadeInModifier(0.1f),new DelayModifier(0.5f),new FadeOutModifier(0.1f)));
 		}
 	}
 
 	
 	// Katanas:
-	private class Katanas extends Entity {
+	private class Katana extends Entity {
+		AnimatedSprite katanaSpriteRight;
+		AnimatedSprite katanaSpriteLeft;
+		long[] katanaAnimTime =  {50, 50, 50, 50};
 		
+		public Katana() {
+			// Katana derecha
+			katanaSpriteRight = new AnimatedSprite(width/2 + 300, height/2,
+						ResourceManager.getInstance().cutSwordSparkle2TR,
+						ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+			katanaSpriteRight.setAlpha(0f);
+			attachChild(katanaSpriteRight);
+			
+			// Katana izquierda (invertida):
+			katanaSpriteLeft = new AnimatedSprite(width/2 - 300, height/2,
+					ResourceManager.getInstance().cutSwordSparkle2TR,
+					ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+			katanaSpriteLeft.setAlpha(0f);
+			katanaSpriteLeft.setFlipped(true, true);
+			attachChild(katanaSpriteLeft);
+		}
+		
+		public void cutRight() {
+			katanaSpriteRight.registerEntityModifier(new SequenceEntityModifier(
+					new FadeInModifier(0.05f), new DelayModifier(0.4f), new FadeOutModifier(0.1f)));
+			katanaSpriteRight.animate(katanaAnimTime, 0, 3, false);
+		}
+		
+		public void cutLeft() {		
+			katanaSpriteLeft.registerEntityModifier(new SequenceEntityModifier(
+					new FadeInModifier(0.05f), new DelayModifier(0.4f), new FadeOutModifier(0.1f)));
+			katanaSpriteLeft.animate(katanaAnimTime, 0, 3, false);
+		}		
 	}
+	
+	
 	
 }
 
