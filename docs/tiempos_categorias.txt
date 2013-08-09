@@ -1,0 +1,11 @@
+ana	Análisis
+dis	Diseño
+imp	Implementación
+pru	Pruebas
+doc	Documentación
+err	Corrección de errores
+gra	Gráficos
+son	Sonido
+mus	Música
+his	Historia y desarrollo de juego
+dju	Diseño de juego
