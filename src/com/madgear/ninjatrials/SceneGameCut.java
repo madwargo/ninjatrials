@@ -30,9 +30,9 @@ import com.madgear.ninjatrials.ResourceManager;
 
 
 
-public class SceneGameCut extends ManagedScene {
+public class SceneGameCut extends GameScene {
 
-	float timeMax = 2;				// Tiempo máximo para corte:
+	float timeMax = 10;				// Tiempo máximo para corte:
 	float timeCounter = timeMax;	// Tiempo total que queda para el corte
 	int score; 						// puntuación 
 	int secuenceNum = 0;  		// Contador para la animación de corte
@@ -50,10 +50,11 @@ public class SceneGameCut extends ManagedScene {
 	Eyes mEyes;
 	Katana mKatana;
 	Rectangle blinkLayer;  // capa para el destello
+	boolean cutDone = false;
 
 	
 	public SceneGameCut() {
-		super(1f);
+		super();
 	}
 
 	@Override
@@ -161,7 +162,6 @@ public class SceneGameCut extends ManagedScene {
 			@Override
 			public void onUpdate(float pSecondsElapsed) {
 				if(timeCounter <= 0) {
-					SceneGameCut.this.unregisterUpdateHandler(this);
 					timeOut();  // Si el tiempo llega a 0 timeout!
 				}
 				else {
@@ -196,9 +196,21 @@ public class SceneGameCut extends ManagedScene {
 				new DelayModifier(0.6f), new FadeOutModifier(5f)));
 	}
 	
+	
+	// Se pulsa el boton O:
+	@Override
+	public void onPressButtonO() {
+		if(cutDone == false) {
+			clearUpdateHandlers();
+			cut();
+		}
+	}
+	
+	
 	// Secuencia de corte:
 	// Hay que lanzar cada animación en el tiempo correcto.
 	public void cut() {
+		cutDone = true;
 		secuenceNum = 0;
 		registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback()
         {                      
@@ -228,8 +240,8 @@ public class SceneGameCut extends ManagedScene {
 	
 	// Se acabó el tiempo!!
 	public void timeOut(){
+		clearUpdateHandlers();
 		countingText.setText("0.00");
-		cut(); //provisional
 	}
 	
 	

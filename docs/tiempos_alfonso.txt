@@ -1,5 +1,6 @@
 08/08/13	jue
 09/08/13	vie	0,5	doc	Plantilla para control de tiempos.
+09/08/13	vie	1	imp	GameScene, IUserImput, SceneGameCut.
 10/08/13	sáb
 11/08/13	dom
 12/08/13	lun
