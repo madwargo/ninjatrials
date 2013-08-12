@@ -1,12 +1,38 @@
-ana	Análisis
-dis	Diseño
-imp	Implementación
-pru	Pruebas
-doc	Documentación
-err	Corrección de errores
-gra	Gráficos
-son	Sonido
-mus	Música
-his	Historia y desarrollo de juego
-dju	Diseño de juego
-for	Formación
+Descripción de las categorias para el control de tiempos
+--------------------------------------------------------
+
+Análisis SW (ana)
+Comprende el análisis de requisitos de sw, modelado (clases, actividades, etc), prototipos, especificación.
+
+Diseño SW (dis)
+Comprende la arquitectura de sw, estructuras, componentes, modelado, interfaz de usuario.
+
+Implementación SW (imp)
+Escribir el código en base al análisis y el diseño.
+
+Pruebas (pru)
+Probar el código mediante baterías de pruebas para detectar errores y comprobar que el producto satisface la especificación.
+
+Documentación (doc)
+Se realiza durante todo el proceso y consiste en registrar la información util para el proyecto.
+
+Corrección de errores (err)
+Corregir los errores que se detecten en el producto tanto en las pruebas como después de su publicación.
+
+Graficos (gra)
+Creación de gráficos (idea, bocetos, etc).
+
+Sonido (son)
+Creación de sonidos.
+
+Música (mus)
+Creación de música.
+
+Diseño de juego (jue)
+Comprende la creación de las reglas y mecánicas del juego, para producir una determinada experiencia en el usuario.
+
+Desarrollo de juego (des)
+Elaboración y concreción de las ideas que se indicaron en el diseño del juego.
+
+Formación (for)
+Aprendizaje de nuevas herramientas, lenguajes, entornos, etc.
