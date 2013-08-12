@@ -28,11 +28,8 @@ Creación de sonidos.
 Música (mus)
 Creación de música.
 
-Diseño de juego (jue)
-Comprende la creación de las reglas y mecánicas del juego, para producir una determinada experiencia en el usuario.
-
-Desarrollo de juego (des)
-Elaboración y concreción de las ideas que se indicaron en el diseño del juego.
+Diseño y desarrollo de juego (des)
+Comprende la creación de las reglas y mecánicas del juego, para producir una determinada experiencia en el usuario. Elaboración y concreción de dichas ideas.
 
 Formación (for)
 Aprendizaje de nuevas herramientas, lenguajes, entornos, etc.
