@@ -26,31 +26,31 @@ Ninja Trials uses [javac](http://en.wikipedia.org/wiki/Javac) (included in [JDK]
 
 ### Compilation without eclipse about Linux:
 
-1. When you install android-sdk, you will need add to PATH the next:
+When you install android-sdk, you will need add to PATH the next:
 
-    * export PATH=$ANDROID\_HOME/tools:$ANDROID\_HOME/platform-tools:$PATH (replace $ANDROID\_HOME by the path of android-sdk)
+    export PATH=$ANDROID\_HOME/tools:$ANDROID\_HOME/platform-tools:$PATH (replace $ANDROID\_HOME by the path of android-sdk)
 
-2. Install AndEngine:
+Install AndEngine:
 
-    * git clone https://github.com/nicolasgramlich/AndEngine.git
-    * cd AndEngine
-    * git checkout -t origin/GLES2-AnchorCenter
-    * android list targets (replace target-id in the next command by ID)
-    * android update project --target target-id --name project-name --path /path/to/project
-    * ant release
+    git clone https://github.com/nicolasgramlich/AndEngine.git
+    cd AndEngine
+    git checkout -t origin/GLES2-AnchorCenter
+    android list targets (replace target-id in the next command by ID)
+    android update project --target target-id --name project-name --path /path/to/project
+    ant release
 
-3. Config adb (command line tool that lets you communicate with an emulator instance or connected Android-powered device):
+Config adb (command line tool that lets you communicate with an emulator instance or connected Android-powered device):
 
-    * sudo adb kill-server
-    * sudo adb start-server
-    * sudo adb devices (aqui deberiamos ver nuestros dispositivo si los tenemos enchufados)
+    sudo adb kill-server
+    sudo adb start-server
+    sudo adb devices (aqui deberiamos ver nuestros dispositivo si los tenemos enchufados)
 
-4. Develop project and load in device:
-   * git clone https://github.com/madwargo/ninjatrials.git
-   * android update project --target target-id --name ninjatrials --path /path/to/project --library /relative/path/AndEngine
-   * cd ninjatrials
-   * ant debug or ant realease
-   * ant debug install or ant release install (this command install the project in the device)
+Develop project and load in device:
+   git clone https://github.com/madwargo/ninjatrials.git
+   android update project --target target-id --name ninjatrials --path /path/to/project --library /relative/path/AndEngine
+   cd ninjatrials
+   ant debug or ant realease
+   ant debug install or ant release install (this command install the project in the device)
 
 ### Add language
 
