@@ -30,7 +30,7 @@ import com.madgear.ninjatrials.ResourceManager;
 
 
 
-public class SceneGameCut extends GameScene {
+public class TrialSceneCut extends GameScene {
 
 	float timeMax = 10;				// Tiempo máximo para corte:
 	float timeCounter = timeMax;	// Tiempo total que queda para el corte
@@ -53,7 +53,7 @@ public class SceneGameCut extends GameScene {
 	boolean cutDone = false;
 
 	
-	public SceneGameCut() {
+	public TrialSceneCut() {
 		super();
 	}
 
@@ -230,7 +230,7 @@ public class SceneGameCut extends GameScene {
             		candleLeft.cut();
             		candleRight.cut();
             	}
-            	if(secuenceNum == 100) SceneGameCut.this.unregisterUpdateHandler(pTimerHandler);
+            	if(secuenceNum == 100) TrialSceneCut.this.unregisterUpdateHandler(pTimerHandler);
             	
             	secuenceNum += 1; // Avanzamos la secuencia (decimas de segundo)
             }
