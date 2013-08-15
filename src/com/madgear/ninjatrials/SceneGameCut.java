@@ -32,10 +32,10 @@ import com.madgear.ninjatrials.ResourceManager;
 
 public class SceneGameCut extends GameScene {
 
-	float timeMax = 10;				// Tiempo m·ximo para corte:
+	float timeMax = 10;				// Tiempo m√°ximo para corte:
 	float timeCounter = timeMax;	// Tiempo total que queda para el corte
-	int score; 						// puntuaciÛn 
-	int secuenceNum = 0;  		// Contador para la animaciÛn de corte
+	int score; 						// puntuaci√≥n 
+	int secuenceNum = 0;  		// Contador para la animaci√≥n de corte
 	
 	float width = ResourceManager.getInstance().cameraWidth;
 	float height = ResourceManager.getInstance().cameraHeight;
@@ -63,7 +63,7 @@ public class SceneGameCut extends GameScene {
 		Scene loadingScene = new Scene(); // Provisional, sera una clase externa
 		loadingScene.getBackground().setColor(0.3f, 0.3f, 0.6f);
 		
-		// AÒadimos algo de texto:
+		// A√±adimos algo de texto:
 		final Text loadingText = new Text(
 				ResourceManager.getInstance().cameraWidth * 0.5f, 
 				ResourceManager.getInstance().cameraHeight *0.3f,
@@ -153,12 +153,12 @@ public class SceneGameCut extends GameScene {
 		attachChild(mKatana);
 		
 		
-		// Controlarmos desfase de tiempo (se restar· en el primer update):
+		// Controlarmos desfase de tiempo (se restar√° en el primer update):
 		timeCounter += ResourceManager.getInstance().engine.getSecondsElapsedTotal();
 		
 		// Update:
 		registerUpdateHandler(new IUpdateHandler() {
-			// Por cada update movemos el cursor a su posiciÛn y comprobamos si se acabÛ el tiempo:
+			// Por cada update movemos el cursor a su posici√≥n y comprobamos si se acab√≥ el tiempo:
 			@Override
 			public void onUpdate(float pSecondsElapsed) {
 				if(timeCounter <= 0) {
@@ -208,7 +208,7 @@ public class SceneGameCut extends GameScene {
 	
 	
 	// Secuencia de corte:
-	// Hay que lanzar cada animaciÛn en el tiempo correcto.
+	// Hay que lanzar cada animaci√≥n en el tiempo correcto.
 	public void cut() {
 		cutDone = true;
 		secuenceNum = 0;
@@ -238,14 +238,14 @@ public class SceneGameCut extends GameScene {
 	}
 	
 	
-	// Se acabÛ el tiempo!!
+	// Se acab√≥ el tiempo!!
 	public void timeOut(){
 		clearUpdateHandlers();
 		countingText.setText("0.00");
 	}
 	
 	
-	// PuntuaciÛn:
+	// Puntuaci√≥n:
 	// score (0-100) = valor power (0-100) - penalizacion por tiempo (segundos transcurridos x3)
 	public int score() {
 		return Math.round(mPowerBar.getPowerValue() - (timeCounter * 3));
@@ -309,7 +309,7 @@ public class SceneGameCut extends GameScene {
 		// Rompe el farol
 		public void cut() {
 			light.setVisible(false);
-			// Rompemos el farol con valores aleatorios para posicion final y rotaciÛn:
+			// Rompemos el farol con valores aleatorios para posicion final y rotaci√≥n:
 			top.registerEntityModifier(new ParallelEntityModifier(
 					new JumpModifier(3f, top.getX(), top.getX()+(float)Math.random()*600-300,
 							top.getY(), top.getY()-400, 100f),
@@ -318,15 +318,15 @@ public class SceneGameCut extends GameScene {
 	}
 	
 	
-	// Clase barra de energÌa:
+	// Clase barra de energ√≠a:
 	private class PowerBar extends Entity {
-		final float timeRound = 1f; 	// n∫ de segundos que tarda en hacer un ciclo el cursor
+		final float timeRound = 1f; 	// n¬∫ de segundos que tarda en hacer un ciclo el cursor
 		final float cursorMin = 0f;
 		final float cursorMax = 200f;  	// el cursor se mueve desde la pos 0 a 200.
 		float cursorValue = 0f;			// Inicialmente = 0;
-		float cursorOffset;				// PosiciÛn inicial del cursor en eje X
+		float cursorOffset;				// Posici√≥n inicial del cursor en eje X
 		float speed = (cursorMax - cursorMin) / timeRound;  // v = e/t   velocidad
-		int direction = 1; 				// DirecciÛn del cursor. 1 = derecha, -1 = izda;
+		int direction = 1; 				// Direcci√≥n del cursor. 1 = derecha, -1 = izda;
 		
 		Sprite bar, cursor;
 		
@@ -343,7 +343,7 @@ public class SceneGameCut extends GameScene {
 			cursorOffset = posX-100;  // 
 		}
 		
-		// Calcula la posiciÛn del cursor pasado un tiempo dado:
+		// Calcula la posici√≥n del cursor pasado un tiempo dado:
 		public void updateCursorPos(float time) {
 			if(time < 0.2) cursorValue += time*speed*direction;  // controlamos que no se vaya el cursor por el retraso
 			cursor.setX(cursorOffset+cursorValue);

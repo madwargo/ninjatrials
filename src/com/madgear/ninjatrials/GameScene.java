@@ -17,7 +17,7 @@ public abstract class GameScene extends ManagedScene implements IUserInput, IOnS
 		return true;
 	}
 	
-	// Métodos que pueden ser sobreescritos por las subclases:
+	// MÃ©todos que pueden ser sobreescritos por las subclases:
 	public void onPressButtonO() {}
 	public void onPressButtonU() {}
 	public void onPressButtonY() {}
