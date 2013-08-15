@@ -33,3 +33,9 @@ Comprende la creación de las reglas y mecánicas del juego, para producir una det
 
 Formación (for)
 Aprendizaje de nuevas herramientas, lenguajes, entornos, etc.
+
+Planificación (pla)
+Planificación y coordinación de proyecto.
+
+Varios (var)
+Otras actividades que no esntran en las categorías anteriores.

@@ -51,6 +51,11 @@ public class ResourceManager {
 	public TextureManager textureManager;
 	
 	
+	// HUD:
+	public static ITextureRegion hudPowerBarCursorTR;
+	public static ITextureRegion hudCursorTR;
+	public static ITextureRegion hudPowerBarPushTR;
+
 	
 	// CUT SCENE:
 	public static ITiledTextureRegion cutShoTR;
@@ -127,6 +132,51 @@ public class ResourceManager {
 	// tanto en gráficos como música y sonido.
 	// Deben ser "synchronized".
 	
+	public synchronized void loadHUDResources() {
+		BitmapTextureAtlasTextureRegionFactory.setAssetBasePath("gfx/hud/");
+		
+		// Barra power cursor:
+		if(hudPowerBarCursorTR==null) {
+			BitmapTextureAtlas hudPowerBarCursorT = new BitmapTextureAtlas(textureManager, 240, 120, mTransparentTextureOption);
+			hudPowerBarCursorTR = BitmapTextureAtlasTextureRegionFactory.createFromAsset(hudPowerBarCursorT, activity, "power_bar_cursor.png", 0, 0);
+			hudPowerBarCursorT.load();
+		}
+		
+		// Cursor:
+		if(hudCursorTR==null) {
+			BitmapTextureAtlas hudCursorT = new BitmapTextureAtlas(textureManager, 59, 52, mTransparentTextureOption);
+			hudCursorTR = BitmapTextureAtlasTextureRegionFactory.createFromAsset(hudCursorT, activity, "cursor.png", 0, 0);
+			hudCursorT.load();
+		}
+		
+		// Barra power push:
+		if(hudPowerBarPushTR==null) {
+			BitmapTextureAtlas hudPowerBarPushT = new BitmapTextureAtlas(textureManager, 120, 240, mTransparentTextureOption);
+			hudPowerBarPushTR = BitmapTextureAtlasTextureRegionFactory.createFromAsset(hudPowerBarPushT, activity, "power_bar_push.png", 0, 0);
+			hudPowerBarPushT.load();
+		}
+	}
+	
+	public synchronized void unloadHUDResources() {
+		if(hudPowerBarCursorTR!=null) {
+			if(hudPowerBarCursorTR.getTexture().isLoadedToHardware()) {
+				hudPowerBarCursorTR.getTexture().unload();
+				hudPowerBarCursorTR = null;
+			}
+		}
+		if(hudCursorTR!=null) {
+			if(hudCursorTR.getTexture().isLoadedToHardware()) {
+				hudCursorTR.getTexture().unload();
+				hudCursorTR = null;
+			}
+		}
+		if(hudPowerBarPushTR!=null) {
+			if(hudPowerBarPushTR.getTexture().isLoadedToHardware()) {
+				hudPowerBarPushTR.getTexture().unload();
+				hudPowerBarPushTR = null;
+			}
+		}
+	}
 	
 	// Recursos para la escena de corte:
 	public synchronized void loadCutSceneResources() {
