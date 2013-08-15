@@ -4,8 +4,15 @@ import org.andengine.entity.scene.IOnSceneTouchListener;
 import org.andengine.entity.scene.Scene;
 import org.andengine.input.touch.TouchEvent;
 
+/*
+ * Clased GameScene.
+ */
 public abstract class GameScene extends ManagedScene implements IUserInput, IOnSceneTouchListener {
 	
+	/**
+	 * Prueba de documentación.
+	 * @author MadGear Games
+	 */
 	public GameScene(){
 		super(1f);
 		setOnSceneTouchListener(this);
