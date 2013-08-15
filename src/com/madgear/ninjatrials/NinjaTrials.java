@@ -17,20 +17,20 @@ import org.andengine.ui.activity.BaseGameActivity;
 
 public class NinjaTrials extends BaseGameActivity {
 
-	// Resolución de la cámara:
+	// ResoluciÃ³n de la cÃ¡mara:
 	private static final int WIDTH = 1920;		// Ouya res.
 	private static final int HEIGHT = 1080;		// Ouya res.
 
-	// La cámara:
+	// La cÃ¡mara:
 	private Camera mCamera;
 	
 	
 	
 	/* Opciones para el motor:
-		- Política de ratio 16/9.
+		- PolÃ­tica de ratio 16/9.
 		- Landscape fixed
-		- Sonido: sí
-		- Música: sí
+		- Sonido: sÃ­
+		- MÃºsica: sÃ­
 	 */
 	@Override
 	public EngineOptions onCreateEngineOptions() {
@@ -48,7 +48,7 @@ public class NinjaTrials extends BaseGameActivity {
 		// Pantalla encendida siempre:
 		engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);
 
-		// Música:
+		// MÃºsica:
 		engineOptions.getAudioOptions().setNeedsMusic(true);
 		
 		// Sonido:
@@ -60,7 +60,7 @@ public class NinjaTrials extends BaseGameActivity {
 	}
 	
 	
-	// Engine de Máximo FPS = 60;
+	// Engine de MÃ¡ximo FPS = 60;
 	@Override
 	public Engine onCreateEngine(EngineOptions pEngineOptions) {
 		return new LimitedFPSEngine(pEngineOptions, 60);
@@ -93,7 +93,7 @@ public class NinjaTrials extends BaseGameActivity {
 		ResourceManager.setup(this, this.getEngine(), this.getApplicationContext(),
 				WIDTH, HEIGHT);
 
-		// Iniciamos la puntuación, fase, etc
+		// Iniciamos la puntuaciÃ³n, fase, etc
 		GameManager.getInstance().resetGame();
 		
 		// Se crea el fichero de datos del usuario si no existe:

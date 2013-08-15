@@ -71,7 +71,7 @@ public class ResourceManager {
 	
 	
 	// FONTS:
-	public Font fontSmall;		// pequeño
+	public Font fontSmall;		// pequeÃ±o
 	public Font fontMedium;		// mediano
 	public Font fontBig;		// grande
 	
@@ -123,8 +123,8 @@ public class ResourceManager {
 		return INSTANCE;
 	}
 
-	// Cada escena debe tener sus métodos para cargar y descargar recursos (metodo load y unload).
-	// tanto en gráficos como música y sonido.
+	// Cada escena debe tener sus mÃ©todos para cargar y descargar recursos (metodo load y unload).
+	// tanto en grÃ¡ficos como mÃºsica y sonido.
 	// Deben ser "synchronized".
 	
 	
@@ -331,7 +331,7 @@ public class ResourceManager {
 		/* Create the TiledTextureRegion object, passing in the usual
 		parameters, as well as the number of rows and columns in our sprite sheet
 		for the final two parameters */
-		// 6 = nº de imágenes que tiene la animación :D
+		// 6 = nÂº de imÃ¡genes que tiene la animaciÃ³n :D
 		mTiledTextureRegion = BitmapTextureAtlasTextureRegionFactory.createTiledFromAsset(mBitmapTextureAtlas, pContext, "sprite1.png", 6, 1);
 		
 		/* Build the bitmap texture atlas */
@@ -363,7 +363,7 @@ public class ResourceManager {
 	
 	
 	
-	// Se crea un método de load/unload para cada escena:
+	// Se crea un mÃ©todo de load/unload para cada escena:
 	
 /*	 Similar to the loadGameTextures(...) method, except this method will be
 	 * used to load a different scene's textures
