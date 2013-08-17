@@ -6,9 +6,10 @@
 12/08/13	lun	0,5	doc	Descripción de categorias de tiempos.
 13/08/13	mar	1,7	imp	Clase GameManager, PowerBarCursor.
 14/08/13	mié	1,5	imp	Clase PowerBarCursor, Chronometer.
-15/08/13	jue
+15/08/13	jue	2,5	var	Reunión semanal
 16/08/13	vie
-17/08/13	sáb
+17/08/13	sáb	0,75	imp	Clase Chronometer, clase GameHud
+17/08/13	sáb	0,3	doc	Documentar powerbarcursor
 18/08/13	dom
 19/08/13	lun
 20/08/13	mar
