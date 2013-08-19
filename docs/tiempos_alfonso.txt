@@ -11,7 +11,8 @@
 17/08/13	sáb	0,75	imp	Clase Chronometer, clase GameHud
 17/08/13	sáb	0,3	doc	Documentar powerbarcursor
 18/08/13	dom
-19/08/13	lun
+19/08/13	lun	2	imp	Clase TRialCut.
+19/08/13	lun	1	ana	Análisis GameHud y TrialCut.
 20/08/13	mar
 21/08/13	mié
 22/08/13	jue

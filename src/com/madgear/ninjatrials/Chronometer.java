@@ -16,6 +16,7 @@ public class Chronometer extends Entity {
     private float finalValue;
     private float direction;
     private float posX, posY;
+    private boolean timeOut;
     Text digit1, digit2, digit3, digit4, colon;
 
     /**
@@ -86,6 +87,14 @@ public class Chronometer extends Entity {
     }
 
     /**
+     * 
+     * @return True if the Chronometer has reached his final value;
+     */
+    public boolean isTimeOut() {
+        return timeOut;
+    }
+    
+    /**
      * Draw the chronometer in the screen with the current time value.
      */
     private void draw() {
@@ -97,11 +106,27 @@ public class Chronometer extends Entity {
     }
 
     /**
-     * Updates the value of current time and draws the chronometer.
+     * Updates the value of current time and draws the chronometer. If the time exceds the final
+     * value then stop the chronometer.
      */
     @Override
     protected void onManagedUpdate(final float pSecondsElapsed) {
-        timeValue += pSecondsElapsed * direction;
+        if(direction == 1) {
+            timeValue += pSecondsElapsed;
+            if(timeValue >= finalValue) {
+                timeValue = finalValue;
+                stop();
+                timeOut = true;
+            }
+        }
+        else {
+            timeValue -= pSecondsElapsed;
+            if(timeValue <= finalValue) {
+                timeValue = finalValue;
+                stop();
+                timeOut = true;
+            }
+        }
         draw();
         super.onManagedUpdate(pSecondsElapsed);
     }

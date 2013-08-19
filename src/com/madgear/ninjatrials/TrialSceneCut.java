@@ -30,25 +30,32 @@ import com.madgear.ninjatrials.ResourceManager;
  *
  */
 public class TrialSceneCut extends GameScene {
-    float timeMax = 10; // Tiempo máximo para corte:
-    float timeCounter = timeMax; // Tiempo total que queda para el corte
-    int score; // puntuación
-    int secuenceNum = 0; // Contador para la animación de corte
+    private static final int SCORE_POOR = 20;
+    private static final int SCORE_GREAT = 90;
+    private float timeRound;
+    private float timeMax = 10; // Tiempo máximo para corte:
+    private float timeCounter = timeMax; // Tiempo total que queda para el corte
+    private int frameNum = 0; // Contador para la animación
 
-    float width = ResourceManager.getInstance().cameraWidth;
-    float height = ResourceManager.getInstance().cameraHeight;
+    private float width = ResourceManager.getInstance().cameraWidth;
+    private float height = ResourceManager.getInstance().cameraHeight;
 
-    SpriteBackground bg;
-    Tree mTree;
-    Candle candleLeft, candleRight;
-    HUD pHUD;
-    PowerBar mPowerBar;
-    Text countingText;
-    Character mCharacter;
-    Eyes mEyes;
-    Katana mKatana;
-    Rectangle blinkLayer; // capa para el destello
-    boolean cutDone = false;
+    private SpriteBackground bg;
+    private Tree mTree;
+    private Candle candleLeft, candleRight;
+    private GameHUD gameHUD;
+    private PowerBarCursor powerBarCursor;
+    private Chronometer chrono;
+    private Character mCharacter;
+    private Eyes mEyes;
+    private Katana mKatana;
+    private Rectangle blinkLayer;
+    private boolean cutEnabled = false;
+    private TimerHandler trialTimerHandler;
+    private IUpdateHandler trialUpdateHandler;
+    private float readyTime = 1;
+    private int score = 0;
+    private final float endingTime = 10;
 
     public TrialSceneCut() {
         super();
@@ -56,211 +63,220 @@ public class TrialSceneCut extends GameScene {
 
     @Override
     public Scene onLoadingScreenLoadAndShown() {
-
         Scene loadingScene = new Scene(); // Provisional, sera una clase externa
         loadingScene.getBackground().setColor(0.3f, 0.3f, 0.6f);
-
         // Añadimos algo de texto:
         final Text loadingText = new Text(
                 ResourceManager.getInstance().cameraWidth * 0.5f,
                 ResourceManager.getInstance().cameraHeight * 0.3f,
                 ResourceManager.getInstance().fontBig, "Loading...",
                 new TextOptions(HorizontalAlign.CENTER),
-                ResourceManager.getInstance().engine
-                        .getVertexBufferObjectManager());
-
+                ResourceManager.getInstance().engine.getVertexBufferObjectManager());
         loadingScene.attachChild(loadingText);
-
         return loadingScene;
     }
 
     @Override
     public void onLoadingScreenUnloadAndHidden() {
         // TODO Auto-generated method stub
-
     }
 
-    // Cargamos recursos:
     @Override
     public void onLoadScene() {
-        // getBackground().setColor(0.09804f, 0.6274f, 0.8784f); // fondo de
-        // prueba para ver si carga.
-
-        // this.setBackground(new
-        // SpriteBackground(ResourceManager.getInstance().cut_eyes));
         ResourceManager.getInstance().loadCutSceneResources();
+        setTrialDiff(GameManager.getInstance().getSelectedDiff());
+        bg = new SpriteBackground(new Sprite(width * 0.5f, height * 0.5f,
+                ResourceManager.getInstance().cutBackgroundTR,
+                ResourceManager.getInstance().engine.getVertexBufferObjectManager()));
+        setBackground(bg);
+        mTree = new Tree(width * 0.5f, height * 0.5f + 400);
+        candleLeft = new Candle(width * 0.5f - 500, height * 0.5f + 200);
+        candleRight = new Candle(width * 0.5f + 500, height * 0.5f + 200);
+        gameHUD = new GameHUD();
+        powerBarCursor = new PowerBarCursor(200f, 200f, timeRound);
+        chrono = new Chronometer(width - 200, height - 200, 10, 0);
+        mCharacter = new Character(width / 2 - 120, height / 2);
+        mEyes = new Eyes();
+        blinkLayer = new Rectangle(width / 2, height / 2, width, height,
+                ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+        blinkLayer.setAlpha(0f);
+        blinkLayer.setColor(1.0f, 1.0f, 1.0f);
+        mKatana = new Katana();
+    }
 
+    /**
+     * Adjust the trial parameters using the game difficulty as base.
+     * @param diff The game difficulty.
+     */
+    private void setTrialDiff(int diff) {
+        if(diff == GameManager.getInstance().DIFF_EASY)
+            timeRound = 4;
+        else if(diff == GameManager.getInstance().DIFF_MEDIUM)
+            timeRound = 2;
+        else if(diff == GameManager.getInstance().DIFF_HARD)
+            timeRound = 1;   
     }
 
     @Override
     public void onShowScene() {
-
-        // Fondo:
-        bg = new SpriteBackground(new Sprite(width * 0.5f, height * 0.5f,
-                ResourceManager.getInstance().cutBackgroundTR,
-                ResourceManager.getInstance().engine
-                        .getVertexBufferObjectManager()));
-        setBackground(bg);
         setBackgroundEnabled(true);
-
-        // Arbol:
-        mTree = new Tree(width * 0.5f, height * 0.5f + 400);
         attachChild(mTree);
-
-        // Faroles:
-        candleLeft = new Candle(width * 0.5f - 500, height * 0.5f + 200);
-        candleRight = new Candle(width * 0.5f + 500, height * 0.5f + 200);
         attachChild(candleLeft);
         attachChild(candleRight);
-
-        // HUD:
-        pHUD = new HUD();
-        ResourceManager.getInstance().engine.getCamera().setHUD(pHUD);
-        mPowerBar = new PowerBar(200f, 200f);
-        pHUD.attachChild(mPowerBar);
-
-        // Crono de prueba:
-        countingText = new Text(
-                ResourceManager.getInstance().cameraWidth - 200,
-                ResourceManager.getInstance().cameraHeight - 200,
-                ResourceManager.getInstance().fontMedium, String.format(
-                        "%2.2f", timeCounter), String.format("%2.2f",
-                        timeCounter).length(),
-                // new TextOptions(HorizontalAlign.LEFT),
-                ResourceManager.getInstance().engine
-                        .getVertexBufferObjectManager());
-        // countingText.setColor(0.5f, 0.5f, 0f);
-        pHUD.attachChild(countingText);
-
-        // Personaje:
-        mCharacter = new Character(width / 2 - 120, height / 2);
+        ResourceManager.getInstance().engine.getCamera().setHUD(gameHUD);
+        gameHUD.attachChild(powerBarCursor);
+        gameHUD.attachChild(chrono);
         attachChild(mCharacter);
-
-        // Ojos:
-        mEyes = new Eyes();
         attachChild(mEyes);
-
-        // Destello:
-        blinkLayer = new Rectangle(width / 2, height / 2, width, height,
-                ResourceManager.getInstance().engine
-                        .getVertexBufferObjectManager());
-        blinkLayer.setAlpha(0f);
-        blinkLayer.setColor(1.0f, 1.0f, 1.0f); // blanco
         attachChild(blinkLayer);
-
-        // Corte Katana:
-        mKatana = new Katana();
         attachChild(mKatana);
+        readySecuence();
+    }
 
-        // Controlarmos desfase de tiempo (se restará en el primer update):
-        timeCounter += ResourceManager.getInstance().engine
-                .getSecondsElapsedTotal();
-
-        // Update:
-        registerUpdateHandler(new IUpdateHandler() {
-            // Por cada update movemos el cursor a su posición y comprobamos si
-            // se acabó el tiempo:
+    /**
+     * Shows a Ready Message during readyTime seconds. Then calls actionSecuence().
+     */
+    private void readySecuence() {
+        gameHUD.showMessage("Ready");
+        trialTimerHandler= new TimerHandler(readyTime, new ITimerCallback()
+        {                      
             @Override
-            public void onUpdate(float pSecondsElapsed) {
-                if (timeCounter <= 0) {
-                    timeOut(); // Si el tiempo llega a 0 timeout!
-                } else {
-                    countingText.setText(String.format("%2.2f", timeCounter)); // Pintamos
-                                                                               // al
-                                                                               // inicio
-                                                                               // para
-                                                                               // no
-                                                                               // tener
-                                                                               // tiempo
-                                                                               // negativo
-                    timeCounter -= pSecondsElapsed;
-                    mPowerBar.updateCursorPos(pSecondsElapsed);
-                }
-            }
-
-            @Override
-            public void reset() {
+            public void onTimePassed(final TimerHandler pTimerHandler)
+            {
+                unregisterUpdateHandler(trialTimerHandler);
+                actionSecuence();
             }
         });
+        registerUpdateHandler(trialTimerHandler);        
+    }
+
+    /**
+     * Main trial secuence. Shows a "Cut!" message, starts the Chronometer and enables the cut. 
+     */
+    protected void actionSecuence() {
+        gameHUD.showMessage("Cut!");
+        chrono.start();
+        powerBarCursor.start();
+        cutEnabled = true;
+        trialUpdateHandler = new IUpdateHandler() {
+            @Override
+            public void onUpdate(float pSecondsElapsed) {
+                if(chrono.isTimeOut()) {
+                    unregisterUpdateHandler(trialUpdateHandler);
+                    timeOut();
+                }
+            }
+            @Override public void reset() {}
+        };
+        registerUpdateHandler(trialUpdateHandler);
     }
 
     @Override
     public void onHideScene() {
         // TODO Auto-generated method stub
-
     }
 
-    // Liberamos recursos:
     @Override
     public void onUnloadScene() {
         ResourceManager.getInstance().unloadCutSceneResources();
     }
 
-    // Destello:
-    public void blink() {
+    /**
+     * Adds a white blink effect to the scene.
+     */
+    private void blink() {
         blinkLayer.setAlpha(0.9f);
         blinkLayer.registerEntityModifier(new SequenceEntityModifier(
                 new DelayModifier(0.6f), new FadeOutModifier(5f)));
     }
 
-    // Se pulsa el boton O:
+    /**
+     * The action button is pressed then launch the cut if enabled.
+     */
     @Override
     public void onPressButtonO() {
-        if (cutDone == false) {
-            clearUpdateHandlers();
-            cut();
+        if (cutEnabled == true) {
+            cutSecuence();
         }
     }
 
-    // Secuencia de corte:
-    // Hay que lanzar cada animación en el tiempo correcto.
-    public void cut() {
-        cutDone = true;
-        secuenceNum = 0;
-        registerUpdateHandler(new TimerHandler(0.1f, new ITimerCallback() {
+    /**
+     * Cutting secuence. Launch each objects cut animation at proper time. Stops the chrono and
+     * gets the trial score. After the secuence calls the ending secuence.
+     */
+    public void cutSecuence() {
+        cutEnabled = false;
+        chrono.stop();
+        score = getScore();
+        powerBarCursor.stop();
+        frameNum = 0;
+        trialTimerHandler = new TimerHandler(0.1f, new ITimerCallback() {
             @Override
             public void onTimePassed(final TimerHandler pTimerHandler) {
-                pTimerHandler.reset(); // esto hace que se repita el timer de
-                                       // nuevo cada 0.1 seg
-
-                if (secuenceNum == 10)
-                    mEyes.cut();
-                if (secuenceNum == 14)
-                    mCharacter.cut();
-                if (secuenceNum == 16)
-                    blink();
-                if (secuenceNum == 18)
-                    mKatana.cutRight();
-                if (secuenceNum == 21)
-                    mKatana.cutLeft();
-                if (secuenceNum == 24)
-                    mKatana.cutCenter();
-                if (secuenceNum == 45) {
+                pTimerHandler.reset();  // new frame each 0.1 second !
+                if (frameNum == 10) mEyes.cut();
+                if (frameNum == 14) mCharacter.cut();
+                if (frameNum == 16) blink();
+                if (frameNum == 18) mKatana.cutRight();
+                if (frameNum == 21) mKatana.cutLeft();
+                if (frameNum == 24) mKatana.cutCenter();
+                if (frameNum == 45) {
                     mTree.cut();
                     candleLeft.cut();
                     candleRight.cut();
                 }
-                if (secuenceNum == 100)
-                    TrialSceneCut.this.unregisterUpdateHandler(pTimerHandler);
-
-                secuenceNum += 1; // Avanzamos la secuencia (decimas de segundo)
+                if (frameNum == 100) {
+                    unregisterUpdateHandler(trialTimerHandler);
+                    endingSecuence();
+                }
+                frameNum ++;
             }
-        }));
+        });
+        registerUpdateHandler(trialTimerHandler);
     }
 
-    // Se acabó el tiempo!!
-    public void timeOut() {
-        clearUpdateHandlers();
-        countingText.setText("0.00");
+    /**
+     * When time is out the cut is not enabled. Calls ending secuence.
+     */
+    private void timeOut() {
+        cutEnabled = false;
+        score = 0;
+        endingSecuence();
+    }
+
+    private void endingSecuence() {
+        String message;
+        GameManager.getInstance().incrementScore(score);
+        if(score <= SCORE_POOR) {
+            message = "POOR " + score;
+        }
+        else if(score >= SCORE_GREAT) {
+            message = "GREAT! " + score;
+        }
+        else {
+            message = "MEDIUM " + score;
+        }
+        trialTimerHandler= new TimerHandler(endingTime, new ITimerCallback()
+        {                      
+            @Override
+            public void onTimePassed(final TimerHandler pTimerHandler)
+            {
+                unregisterUpdateHandler(trialTimerHandler);
+                SceneManager.getInstance().showScene(new TrialSceneCut());
+            }
+        });
+        registerUpdateHandler(trialTimerHandler); 
+        gameHUD.showComboMessage(message);
     }
 
     // Puntuación:
     // score (0-100) = valor power (0-100) - penalizacion por tiempo (segundos
     // transcurridos x3)
-    public int score() {
-        return Math.round(mPowerBar.getPowerValue() - (timeCounter * 3));
+    private int getScore() {
+        return Math.round(Math.abs(powerBarCursor.getPowerValue()) - (timeCounter * 3));
     }
 
+    
     // Clases auxiliares:
 
     // Clase Arbol:
@@ -340,55 +356,7 @@ public class TrialSceneCut extends GameScene {
                             (float) Math.random() * 180)));
         }
     }
-
-    // Clase barra de energía:
-    private class PowerBar extends Entity {
-        final float timeRound = 1f; // nº de segundos que tarda en hacer un
-                                    // ciclo el cursor
-        final float cursorMin = 0f;
-        final float cursorMax = 200f; // el cursor se mueve desde la pos 0 a
-                                      // 200.
-        float cursorValue = 0f; // Inicialmente = 0;
-        float cursorOffset; // Posición inicial del cursor en eje X
-        float speed = (cursorMax - cursorMin) / timeRound; // v = e/t velocidad
-        int direction = 1; // Dirección del cursor. 1 = derecha, -1 = izda;
-
-        Sprite bar, cursor;
-
-        public PowerBar(float posX, float posY) {
-            bar = new Sprite(posX, posY,
-                    ResourceManager.getInstance().cutHudBarTR,
-                    ResourceManager.getInstance().engine
-                            .getVertexBufferObjectManager());
-            cursor = new Sprite(posX - 100, posY + 60,
-                    ResourceManager.getInstance().cutHudCursorTR,
-                    ResourceManager.getInstance().engine
-                            .getVertexBufferObjectManager());
-            attachChild(bar);
-            attachChild(cursor);
-
-            cursorOffset = posX - 100; //
-        }
-
-        // Calcula la posición del cursor pasado un tiempo dado:
-        public void updateCursorPos(float time) {
-            if (time < 0.2)
-                cursorValue += time * speed * direction; // controlamos que no
-                                                         // se vaya el cursor
-                                                         // por el retraso
-            cursor.setX(cursorOffset + cursorValue);
-            if (cursorValue >= cursorMax)
-                direction = -1;
-            if (cursorValue <= cursorMin)
-                direction = 1;
-        }
-
-        // Devuelve un valor entre 0 y 100, siendo 100 el valor optimo
-        public int getPowerValue() {
-            return 100 - Math.abs(Math.round(cursorValue) - 100);
-        }
-    }
-
+    
     // Clase personaje:
     private class Character extends Entity {
         AnimatedSprite charSprite;

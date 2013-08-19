@@ -21,8 +21,6 @@ public class GameHUD extends HUD {
     private float width = ResourceManager.getInstance().cameraWidth;
     private float height = ResourceManager.getInstance().cameraHeight;
     private Text mTextComboMessage = null;
-    public PowerBarCursor powerBarCursor = null;
-    public Chronometer chronometer = null;
 
     /**
      * Writes a message in the screen. By default the text stands for 1 second, and fade in and

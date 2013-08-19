@@ -145,7 +145,7 @@ public class ResourceManager {
 		// Cursor:
 		if(hudCursorTR==null) {
 			BitmapTextureAtlas hudCursorT = new BitmapTextureAtlas(textureManager, 59, 52, mTransparentTextureOption);
-			hudCursorTR = BitmapTextureAtlasTextureRegionFactory.createFromAsset(hudCursorT, activity, "cursor.png", 0, 0);
+			hudCursorTR = BitmapTextureAtlasTextureRegionFactory.createFromAsset(hudCursorT, activity, "h_cursor.png", 0, 0);
 			hudCursorT.load();
 		}
 		
