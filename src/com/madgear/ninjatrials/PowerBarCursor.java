@@ -3,13 +3,14 @@ package com.madgear.ninjatrials;
 import org.andengine.entity.Entity;
 import org.andengine.entity.sprite.Sprite;
 
+
 /**
  * Energy bar with a cursor that moves from left to right, and in reverse direction when
  * the cursor reach the right margin.
 
  * Cursor moves from a minimum value to the maximum value (from 0 to 200), taking all the range
  * of values. The cursos makes a whole cycle in a time "timeRound".
- * 
+ *
  * The cursor speed is calculated based on timeRound.
  *
  * @author Madgear Games
@@ -26,7 +27,7 @@ public class PowerBarCursor extends Entity {
 
     /**
      * Contruct a PowerBarCursor object.
-     * 
+     *
      * @param posX Position axis X.
      * @param posY Position axis Y.
      * @param timeRound Time in seconds the cursor takes in complete a whole cycle. It's used to

@@ -23,9 +23,10 @@ import org.andengine.entity.text.TextOptions;
 import org.andengine.util.adt.align.HorizontalAlign;
 import com.madgear.ninjatrials.ResourceManager;
 
+
 /**
  * Cut trial scene.
- * 
+ *
  * @author Madgear Games
  *
  */
@@ -114,7 +115,7 @@ public class TrialSceneCut extends GameScene {
         else if(diff == GameManager.getInstance().DIFF_MEDIUM)
             timeRound = 2;
         else if(diff == GameManager.getInstance().DIFF_HARD)
-            timeRound = 1;   
+            timeRound = 1;
     }
 
     @Override
@@ -139,7 +140,7 @@ public class TrialSceneCut extends GameScene {
     private void readySecuence() {
         gameHUD.showMessage("Ready");
         trialTimerHandler= new TimerHandler(readyTime, new ITimerCallback()
-        {                      
+        {
             @Override
             public void onTimePassed(final TimerHandler pTimerHandler)
             {
@@ -147,11 +148,11 @@ public class TrialSceneCut extends GameScene {
                 actionSecuence();
             }
         });
-        registerUpdateHandler(trialTimerHandler);        
+        registerUpdateHandler(trialTimerHandler);
     }
 
     /**
-     * Main trial secuence. Shows a "Cut!" message, starts the Chronometer and enables the cut. 
+     * Main trial secuence. Shows a "Cut!" message, starts the Chronometer and enables the cut.
      */
     protected void actionSecuence() {
         gameHUD.showMessage("Cut!");
@@ -257,7 +258,7 @@ public class TrialSceneCut extends GameScene {
             message = "MEDIUM " + score;
         }
         trialTimerHandler= new TimerHandler(endingTime, new ITimerCallback()
-        {                      
+        {
             @Override
             public void onTimePassed(final TimerHandler pTimerHandler)
             {
@@ -265,7 +266,7 @@ public class TrialSceneCut extends GameScene {
                 SceneManager.getInstance().showScene(new TrialSceneCut());
             }
         });
-        registerUpdateHandler(trialTimerHandler); 
+        registerUpdateHandler(trialTimerHandler);
         gameHUD.showComboMessage(message);
     }
 
@@ -276,7 +277,7 @@ public class TrialSceneCut extends GameScene {
         return Math.round(Math.abs(powerBarCursor.getPowerValue()) - (timeCounter * 3));
     }
 
-    
+
     // Clases auxiliares:
 
     // Clase Arbol:
@@ -284,22 +285,18 @@ public class TrialSceneCut extends GameScene {
         private final float gap = 160; // espacio entre las partes superior y la
                                        // inferior
         // calcula el desplazamiento entre las partes
-        private float offset = (ResourceManager.getInstance().cutTreeTopTR
-                .getHeight() / 2f + ResourceManager.getInstance().cutTreeBottomTR
-                .getHeight() / 2f)
-                - gap;
+        private float offset = (ResourceManager.getInstance().cutTreeTopTR.getHeight() / 2f +
+                ResourceManager.getInstance().cutTreeBottomTR.getHeight() / 2f) - gap;
 
         Sprite top, bottom;
 
         public Tree(float posX, float posY) {
             top = new Sprite(posX, posY,
                     ResourceManager.getInstance().cutTreeTopTR,
-                    ResourceManager.getInstance().engine
-                            .getVertexBufferObjectManager());
+                    ResourceManager.getInstance().engine.getVertexBufferObjectManager());
             bottom = new Sprite(posX, posY - offset,
                     ResourceManager.getInstance().cutTreeBottomTR,
-                    ResourceManager.getInstance().engine
-                            .getVertexBufferObjectManager());
+                    ResourceManager.getInstance().engine.getVertexBufferObjectManager());
             attachChild(bottom);
             attachChild(top);
         }
@@ -316,26 +313,21 @@ public class TrialSceneCut extends GameScene {
         private final float gap = 40; // espacio entre las partes superior y la
                                       // inferior
         // calcula el desplazamiento entre las partes
-        private float offset = (ResourceManager.getInstance().cutCandleTopTR
-                .getHeight() / 2f + ResourceManager.getInstance().cutCandleBottomTR
-                .getHeight() / 2f)
-                - gap;
+        private float offset = (ResourceManager.getInstance().cutCandleTopTR.getHeight() / 2f +
+                ResourceManager.getInstance().cutCandleBottomTR .getHeight() / 2f) - gap;
 
         Sprite top, bottom, light;
 
         public Candle(float posX, float posY) {
             top = new Sprite(posX, posY,
                     ResourceManager.getInstance().cutCandleTopTR,
-                    ResourceManager.getInstance().engine
-                            .getVertexBufferObjectManager());
+                    ResourceManager.getInstance().engine.getVertexBufferObjectManager());
             bottom = new Sprite(posX, posY - offset,
                     ResourceManager.getInstance().cutCandleBottomTR,
-                    ResourceManager.getInstance().engine
-                            .getVertexBufferObjectManager());
+                    ResourceManager.getInstance().engine.getVertexBufferObjectManager());
             light = new Sprite(posX, posY,
                     ResourceManager.getInstance().cutCandleLightTR,
-                    ResourceManager.getInstance().engine
-                            .getVertexBufferObjectManager());
+                    ResourceManager.getInstance().engine.getVertexBufferObjectManager());
             light.setAlpha(0.6f);
 
             attachChild(bottom);
@@ -356,7 +348,7 @@ public class TrialSceneCut extends GameScene {
                             (float) Math.random() * 180)));
         }
     }
-    
+
     // Clase personaje:
     private class Character extends Entity {
         AnimatedSprite charSprite;
@@ -382,8 +374,7 @@ public class TrialSceneCut extends GameScene {
         public Eyes() {
             eyesSprite = new Sprite(width / 2, height / 2,
                     ResourceManager.getInstance().cutEyesTR,
-                    ResourceManager.getInstance().engine
-                            .getVertexBufferObjectManager());
+                    ResourceManager.getInstance().engine.getVertexBufferObjectManager());
             eyesSprite.setAlpha(0f); // inicialmente no se ven.
             attachChild(eyesSprite);
 
@@ -408,16 +399,14 @@ public class TrialSceneCut extends GameScene {
             // Katana derecha
             katanaSpriteRight = new AnimatedSprite(width / 2 + 300, height / 2,
                     ResourceManager.getInstance().cutSwordSparkle2TR,
-                    ResourceManager.getInstance().engine
-                            .getVertexBufferObjectManager());
+                    ResourceManager.getInstance().engine.getVertexBufferObjectManager());
             katanaSpriteRight.setAlpha(0f);
             attachChild(katanaSpriteRight);
 
             // Katana izquierda (invertida):
             katanaSpriteLeft = new AnimatedSprite(width / 2 - 300, height / 2,
                     ResourceManager.getInstance().cutSwordSparkle2TR,
-                    ResourceManager.getInstance().engine
-                            .getVertexBufferObjectManager());
+                    ResourceManager.getInstance().engine.getVertexBufferObjectManager());
             katanaSpriteLeft.setAlpha(0f);
             katanaSpriteLeft.setFlipped(true, true);
             attachChild(katanaSpriteLeft);
@@ -425,34 +414,27 @@ public class TrialSceneCut extends GameScene {
             // Katana central (arbol):
             katanaSpriteCenter = new Sprite(width / 2, height / 2 + 300,
                     ResourceManager.getInstance().cutSwordSparkle1TR,
-                    ResourceManager.getInstance().engine
-                            .getVertexBufferObjectManager());
+                    ResourceManager.getInstance().engine.getVertexBufferObjectManager());
             katanaSpriteCenter.setAlpha(0f); // inicialmente no se ve.
             katanaSpriteCenter.setFlippedHorizontal(true);
             attachChild(katanaSpriteCenter);
         }
 
         public void cutRight() {
-            katanaSpriteRight
-                    .registerEntityModifier(new SequenceEntityModifier(
-                            new FadeInModifier(0.05f), new DelayModifier(0.4f),
-                            new FadeOutModifier(0.1f)));
+            katanaSpriteRight.registerEntityModifier(new SequenceEntityModifier(
+                    new FadeInModifier(0.05f), new DelayModifier(0.4f), new FadeOutModifier(0.1f)));
             katanaSpriteRight.animate(katanaAnimTime, 0, 3, false);
         }
 
         public void cutLeft() {
             katanaSpriteLeft.registerEntityModifier(new SequenceEntityModifier(
-                    new FadeInModifier(0.05f), new DelayModifier(0.4f),
-                    new FadeOutModifier(0.1f)));
+                    new FadeInModifier(0.05f), new DelayModifier(0.4f), new FadeOutModifier(0.1f)));
             katanaSpriteLeft.animate(katanaAnimTime, 0, 3, false);
         }
 
         public void cutCenter() {
-            katanaSpriteCenter
-                    .registerEntityModifier(new SequenceEntityModifier(
-                            new FadeInModifier(0.1f), new DelayModifier(0.2f),
-                            new FadeOutModifier(0.1f)));
+            katanaSpriteCenter.registerEntityModifier(new SequenceEntityModifier(
+                    new FadeInModifier(0.1f), new DelayModifier(0.2f), new FadeOutModifier(0.1f)));
         }
     }
-
 }

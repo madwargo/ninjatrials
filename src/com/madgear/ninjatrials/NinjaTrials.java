@@ -10,11 +10,13 @@ import org.andengine.engine.options.resolutionpolicy.RatioResolutionPolicy;
 import org.andengine.entity.scene.Scene;
 import org.andengine.ui.activity.BaseGameActivity;
 
+
 public class NinjaTrials extends BaseGameActivity {
 
     // Resolución de la cámara:
     private static final int WIDTH = 1920; // Ouya res.
     private static final int HEIGHT = 1080; // Ouya res.
+    private static final float RATIO = 16 / 9f; // Ouya res.
 
     // La cámara:
     private Camera mCamera;
@@ -25,15 +27,12 @@ public class NinjaTrials extends BaseGameActivity {
      */
     @Override
     public EngineOptions onCreateEngineOptions() {
-
         // Camara:
         mCamera = new Camera(0, 0, WIDTH, HEIGHT);
 
         // Opciones de engine:
         EngineOptions engineOptions = new EngineOptions(true,
-                ScreenOrientation.LANDSCAPE_FIXED, new RatioResolutionPolicy(
-                        16 / 9f), // Ratio 16:9
-                mCamera);
+                ScreenOrientation.LANDSCAPE_FIXED, new RatioResolutionPolicy(RATIO), mCamera);
 
         // Pantalla encendida siempre:
         engineOptions.setWakeLockOptions(WakeLockOptions.SCREEN_ON);
@@ -58,16 +57,13 @@ public class NinjaTrials extends BaseGameActivity {
      * @Override protected void onCreate(Bundle savedInstanceState) {
      * super.onCreate(savedInstanceState);
      * setContentView(R.layout.activity_main); }
-     * 
+     *
      * @Override public boolean onCreateOptionsMenu(Menu menu) { // Inflate the
      * menu; this adds items to the action bar if it is present.
      * getMenuInflater().inflate(R.menu.main, menu); return true; }
      */
-
     @Override
-    public void onCreateResources(
-            OnCreateResourcesCallback pOnCreateResourcesCallback) {
-
+    public void onCreateResources(OnCreateResourcesCallback pOnCreateResourcesCallback) {
         // Setup de ResourceManager.
         ResourceManager.setup(this, this.getEngine(),
                 this.getApplicationContext(), WIDTH, HEIGHT);
@@ -90,15 +86,12 @@ public class NinjaTrials extends BaseGameActivity {
 
     @Override
     public void onCreateScene(OnCreateSceneCallback pOnCreateSceneCallback) {
-
         // No necesitamos ninguna escena
         pOnCreateSceneCallback.onCreateSceneFinished(null);
     }
 
     @Override
-    public void onPopulateScene(Scene pScene,
-            OnPopulateSceneCallback pOnPopulateSceneCallback) {
-
+    public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback) {
         // Iniciamos a la primera escena:
         SceneManager.getInstance().showScene(new TrialSceneCut());
 
@@ -127,10 +120,10 @@ public class NinjaTrials extends BaseGameActivity {
 
     /*
      * // Liberamos la memoria: public void onUnloadResources () {
-     * 
+     *
      * ResourceManager.getInstance().unloadFonts();
-     * 
-     * 
+     *
+     *
      * }
      */
 
@@ -138,11 +131,10 @@ public class NinjaTrials extends BaseGameActivity {
     /*
      * // Some devices do not exit the game when the activity is destroyed. //
      * This ensures that the game is closed.
-     * 
+     *
      * @Override protected void onDestroy() { super.onDestroy(); System.exit(0);
      * }
      */
-
     @Override
     public void onBackPressed() {
         // If the resource manager has been setup...
@@ -157,5 +149,4 @@ public class NinjaTrials extends BaseGameActivity {
             System.exit(0);
         }
     }
-
 }

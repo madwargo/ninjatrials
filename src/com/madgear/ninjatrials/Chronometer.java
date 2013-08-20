@@ -3,6 +3,7 @@ package com.madgear.ninjatrials;
 import org.andengine.entity.Entity;
 import org.andengine.entity.text.Text;
 
+
 /**
  * Choronometer with 4 digits with format 00:00.
  * Each digit has his own position, this way the digits doesn't move if the lenght of the
@@ -23,7 +24,7 @@ public class Chronometer extends Entity {
      * Construct a chronometer.
      * @param posX Position axis X.
      * @param posY Position axis Y.
-     * @param initialValue Initial time value. 
+     * @param initialValue Initial time value.
      * @param finalValue Final time value.
      */
     public Chronometer(float posX, float posY, int initialValue, int finalValue) {
@@ -87,13 +88,13 @@ public class Chronometer extends Entity {
     }
 
     /**
-     * 
+     *
      * @return True if the Chronometer has reached his final value;
      */
     public boolean isTimeOut() {
         return timeOut;
     }
-    
+
     /**
      * Draw the chronometer in the screen with the current time value.
      */

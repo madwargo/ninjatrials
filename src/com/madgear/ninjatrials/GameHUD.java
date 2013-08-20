@@ -10,9 +10,10 @@ import org.andengine.entity.text.Text;
 import org.andengine.entity.text.TextOptions;
 import org.andengine.util.adt.align.HorizontalAlign;
 
+
 /**
  * This class controls the display of the game HUD of the game.
- * 
+ *
  * Can write text, includes a chronometer and various types of power bars.
  * @author Madgear Games
  *
@@ -94,7 +95,6 @@ public class GameHUD extends HUD {
         mTextComboMessage.setPosition(xPos, yPos);
         mTextComboMessage.setText(message);
         mTextComboMessage.setAlpha(1);
-
     }
 
     /**
