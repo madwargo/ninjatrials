@@ -3,6 +3,8 @@ package com.madgear.ninjatrials;
 import org.andengine.engine.camera.hud.HUD;
 import org.andengine.entity.modifier.AlphaModifier;
 import org.andengine.entity.modifier.DelayModifier;
+import org.andengine.entity.modifier.FadeInModifier;
+import org.andengine.entity.modifier.FadeOutModifier;
 import org.andengine.entity.modifier.ParallelEntityModifier;
 import org.andengine.entity.modifier.ScaleModifier;
 import org.andengine.entity.modifier.SequenceEntityModifier;
@@ -24,13 +26,25 @@ public class GameHUD extends HUD {
     private Text mTextComboMessage = null;
 
     /**
+     * GameHUD constructor
+     */
+    public GameHUD() {
+        mTextComboMessage = new Text(width/2, height/2,
+                ResourceManager.getInstance().fontMedium, "",
+                new TextOptions(HorizontalAlign.CENTER),
+                ResourceManager.getInstance().engine.getVertexBufferObjectManager());
+        mTextComboMessage.setAlpha(0);
+        attachChild(mTextComboMessage);
+    }
+    
+    /**
      * Writes a message in the screen. By default the text stands for 1 second, and fade in and
      * fade out in 0.25 seconds, and is in the screen center.
      * The text grows from 90% to 100% size.
      * @param message The text we want to display.
      */
     public void showMessage(String message) {
-        showMessage(message, 0.25f, 1.0f, 0.25f);
+        showMessage(message, 0.25f, 2.0f, 0.25f);
     }
 
     /**
@@ -64,17 +78,15 @@ public class GameHUD extends HUD {
         attachChild(mTextMessage);
         mTextMessage.setAlpha(0);
         mTextMessage.setScale(0.9f);
-        SequenceEntityModifier mSeqEntMod = new SequenceEntityModifier(
+        mTextMessage.registerEntityModifier(new SequenceEntityModifier(
                 new ParallelEntityModifier(
-                        // entrada logo
-                        new AlphaModifier(msgEnterTime, 0, 1),
-                        new ScaleModifier(msgEnterTime, 0.95f, 1)),
-                new DelayModifier(msgDisplayTime),// logo quieto
+                        new ScaleModifier(msgEnterTime, 0.9f, 1),
+                        new FadeInModifier(msgEnterTime)),
+                new DelayModifier(msgDisplayTime),
                 new ParallelEntityModifier(
-                        // entrada logo
-                        new AlphaModifier(msgExitTime, 1, 0),
-                        new ScaleModifier(msgExitTime, 1, 0.95f)));
-        mTextMessage.registerEntityModifier(mSeqEntMod);
+                        new ScaleModifier(msgExitTime, 1f, 1.2f),
+                        new FadeOutModifier(msgExitTime))
+                ));
     }
 
     /**

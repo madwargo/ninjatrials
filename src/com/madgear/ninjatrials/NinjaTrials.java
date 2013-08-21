@@ -93,8 +93,7 @@ public class NinjaTrials extends BaseGameActivity {
     @Override
     public void onPopulateScene(Scene pScene, OnPopulateSceneCallback pOnPopulateSceneCallback) {
         // Iniciamos a la primera escena:
-        SceneManager.getInstance().showScene(new TrialSceneCut());
-
+        SceneManager.getInstance().showScene(new DummyMenu());
         pOnPopulateSceneCallback.onPopulateSceneFinished();
     }
 

@@ -1,7 +1,13 @@
 package com.madgear.ninjatrials;
 
+import java.text.DecimalFormat;
+
 import org.andengine.entity.Entity;
 import org.andengine.entity.text.Text;
+import org.andengine.entity.text.TextOptions;
+import org.andengine.util.adt.align.HorizontalAlign;
+
+import android.util.Log;
 
 
 /**
@@ -18,7 +24,10 @@ public class Chronometer extends Entity {
     private float direction;
     private float posX, posY;
     private boolean timeOut;
-    Text digit1, digit2, digit3, digit4, colon;
+    private Text digit1, digit2, digit3, digit4, colon;
+    private String timeString;
+    private DecimalFormat formatter = new java.text.DecimalFormat("00.00");
+
 
     /**
      * Construct a chronometer.
@@ -28,28 +37,38 @@ public class Chronometer extends Entity {
      * @param finalValue Final time value.
      */
     public Chronometer(float posX, float posY, int initialValue, int finalValue) {
+        setIgnoreUpdate(true);
         this.initialValue = (float) initialValue;
         this.finalValue = (float) finalValue;
         this.timeValue = this.initialValue;
         this.posX = posX;
         this.posY = posY;
-
+        this.timeOut = false;
         digit1 = new Text(posX - 100, posY,
                 ResourceManager.getInstance().fontMedium, "0",
+                new TextOptions(HorizontalAlign.CENTER),
                 ResourceManager.getInstance().engine.getVertexBufferObjectManager());
         digit2 = new Text(posX - 50, posY,
                 ResourceManager.getInstance().fontMedium, "0",
+                new TextOptions(HorizontalAlign.CENTER),
                 ResourceManager.getInstance().engine.getVertexBufferObjectManager());
         digit3 = new Text(posX + 50, posY,
                 ResourceManager.getInstance().fontMedium, "0",
+                new TextOptions(HorizontalAlign.CENTER),
                 ResourceManager.getInstance().engine.getVertexBufferObjectManager());
         digit4 = new Text(posX + 100, posY,
                 ResourceManager.getInstance().fontMedium, "0",
+                new TextOptions(HorizontalAlign.CENTER),
                 ResourceManager.getInstance().engine.getVertexBufferObjectManager());
         colon = new Text(posX, posY,
                 ResourceManager.getInstance().fontMedium, ":",
+                new TextOptions(HorizontalAlign.CENTER),
                 ResourceManager.getInstance().engine.getVertexBufferObjectManager());
-        setIgnoreUpdate(true);
+        attachChild(digit1);
+        attachChild(digit2);
+        attachChild(digit3);
+        attachChild(digit4);
+        attachChild(colon);
         if (initialValue < finalValue)
             direction = 1;
         else
@@ -99,11 +118,11 @@ public class Chronometer extends Entity {
      * Draw the chronometer in the screen with the current time value.
      */
     private void draw() {
-        String timeString = String.format("%2.2f", timeValue);
-        digit1.setText(timeString.substring(0, 0));
-        digit2.setText(timeString.substring(1, 1));
-        digit1.setText(timeString.substring(3, 3));
-        digit1.setText(timeString.substring(4, 4));
+        timeString = formatter.format(timeValue);
+        digit1.setText(timeString.substring(0, 1));
+        digit2.setText(timeString.substring(1, 2));
+        digit3.setText(timeString.substring(3, 4));
+        digit4.setText(timeString.substring(4));
     }
 
     /**

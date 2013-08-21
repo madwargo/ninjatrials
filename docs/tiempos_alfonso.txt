@@ -13,8 +13,9 @@
 18/08/13	dom
 19/08/13	lun	2	imp	Clase TRialCut.
 19/08/13	lun	1	ana	Análisis GameHud y TrialCut.
-20/08/13	mar
-21/08/13	mié
+20/08/13	mar	3	imp	ClaseTRialCut.
+20/08/13	mar	0,5	var	Correo y redmine.
+21/08/13	mié	
 22/08/13	jue
 23/08/13	vie
 24/08/13	sáb

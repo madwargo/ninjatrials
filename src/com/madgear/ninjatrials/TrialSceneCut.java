@@ -1,6 +1,5 @@
 package com.madgear.ninjatrials;
 
-import org.andengine.engine.camera.hud.HUD;
 import org.andengine.engine.handler.IUpdateHandler;
 import org.andengine.engine.handler.timer.ITimerCallback;
 import org.andengine.engine.handler.timer.TimerHandler;
@@ -23,7 +22,6 @@ import org.andengine.entity.text.TextOptions;
 import org.andengine.util.adt.align.HorizontalAlign;
 import com.madgear.ninjatrials.ResourceManager;
 
-
 /**
  * Cut trial scene.
  *
@@ -33,10 +31,11 @@ import com.madgear.ninjatrials.ResourceManager;
 public class TrialSceneCut extends GameScene {
     private static final int SCORE_POOR = 20;
     private static final int SCORE_GREAT = 90;
-    private float timeRound;
+    private float timeRound;  // tiempo para ciclo de powerbar
     private float timeMax = 10; // Tiempo máximo para corte:
     private float timeCounter = timeMax; // Tiempo total que queda para el corte
     private int frameNum = 0; // Contador para la animación
+    private float timerStartedIn = 0; // control de tiempo
 
     private float width = ResourceManager.getInstance().cameraWidth;
     private float height = ResourceManager.getInstance().cameraHeight;
@@ -54,10 +53,13 @@ public class TrialSceneCut extends GameScene {
     private boolean cutEnabled = false;
     private TimerHandler trialTimerHandler;
     private IUpdateHandler trialUpdateHandler;
-    private float readyTime = 1;
+    final private float readyTime = 3f;
+    final private float endingTime = 10f;
     private int score = 0;
-    private final float endingTime = 10;
 
+    /**
+     * Calls the super class constructor.
+     */
     public TrialSceneCut() {
         super();
     }
@@ -78,10 +80,11 @@ public class TrialSceneCut extends GameScene {
     }
 
     @Override
-    public void onLoadingScreenUnloadAndHidden() {
-        // TODO Auto-generated method stub
-    }
+    public void onLoadingScreenUnloadAndHidden() {}
 
+    /**
+     * Loads all the Scene resources and create the main objects.
+     */
     @Override
     public void onLoadScene() {
         ResourceManager.getInstance().loadCutSceneResources();
@@ -106,18 +109,8 @@ public class TrialSceneCut extends GameScene {
     }
 
     /**
-     * Adjust the trial parameters using the game difficulty as base.
-     * @param diff The game difficulty.
+     * Put all the objects in the scene.
      */
-    private void setTrialDiff(int diff) {
-        if(diff == GameManager.getInstance().DIFF_EASY)
-            timeRound = 4;
-        else if(diff == GameManager.getInstance().DIFF_MEDIUM)
-            timeRound = 2;
-        else if(diff == GameManager.getInstance().DIFF_HARD)
-            timeRound = 1;
-    }
-
     @Override
     public void onShowScene() {
         setBackgroundEnabled(true);
@@ -131,85 +124,70 @@ public class TrialSceneCut extends GameScene {
         attachChild(mEyes);
         attachChild(blinkLayer);
         attachChild(mKatana);
-        readySecuence();
-    }
-
-    /**
-     * Shows a Ready Message during readyTime seconds. Then calls actionSecuence().
-     */
-    private void readySecuence() {
-        gameHUD.showMessage("Ready");
-        trialTimerHandler= new TimerHandler(readyTime, new ITimerCallback()
-        {
-            @Override
-            public void onTimePassed(final TimerHandler pTimerHandler)
-            {
-                unregisterUpdateHandler(trialTimerHandler);
-                actionSecuence();
-            }
-        });
-        registerUpdateHandler(trialTimerHandler);
-    }
-
-    /**
-     * Main trial secuence. Shows a "Cut!" message, starts the Chronometer and enables the cut.
-     */
-    protected void actionSecuence() {
-        gameHUD.showMessage("Cut!");
-        chrono.start();
-        powerBarCursor.start();
-        cutEnabled = true;
-        trialUpdateHandler = new IUpdateHandler() {
-            @Override
-            public void onUpdate(float pSecondsElapsed) {
-                if(chrono.isTimeOut()) {
-                    unregisterUpdateHandler(trialUpdateHandler);
-                    timeOut();
-                }
-            }
-            @Override public void reset() {}
-        };
-        registerUpdateHandler(trialUpdateHandler);
+        readySequence();
     }
 
     @Override
-    public void onHideScene() {
-        // TODO Auto-generated method stub
-    }
+    public void onHideScene() {}
 
+    /**
+     * Unloads all the scene resources.
+     */
     @Override
     public void onUnloadScene() {
         ResourceManager.getInstance().unloadCutSceneResources();
     }
 
     /**
-     * Adds a white blink effect to the scene.
+     * Shows a Ready Message during readyTime seconds. Then calls actionSecuence().
      */
-    private void blink() {
-        blinkLayer.setAlpha(0.9f);
-        blinkLayer.registerEntityModifier(new SequenceEntityModifier(
-                new DelayModifier(0.6f), new FadeOutModifier(5f)));
+    private void readySequence() {
+        timerStartedIn = ResourceManager.getInstance().engine.getSecondsElapsedTotal(); 
+        trialUpdateHandler = new IUpdateHandler() {
+            @Override
+            public void onUpdate(float pSecondsElapsed) {
+                if(ResourceManager.getInstance().engine.getSecondsElapsedTotal() >
+                timerStartedIn + readyTime) {
+                    TrialSceneCut.this.unregisterUpdateHandler(trialUpdateHandler);
+                    actionSequence();
+                  }
+            }
+            @Override public void reset() {}
+        };
+        registerUpdateHandler(trialUpdateHandler);
+        gameHUD.showMessage("Ready");
     }
 
     /**
-     * The action button is pressed then launch the cut if enabled.
+     * Main trial secuence. Shows a "Cut!" message, starts the Chronometer and enables the cut.
      */
-    @Override
-    public void onPressButtonO() {
-        if (cutEnabled == true) {
-            cutSecuence();
-        }
+    protected void actionSequence() {
+        trialUpdateHandler = new IUpdateHandler() {
+            @Override
+            public void onUpdate(float pSecondsElapsed) {
+                if(chrono.isTimeOut()) {
+                    TrialSceneCut.this.unregisterUpdateHandler(trialUpdateHandler);
+                    timeOut();
+                }
+            }
+            @Override public void reset() {}
+        };
+        registerUpdateHandler(trialUpdateHandler);
+        gameHUD.showMessage("Cut!");
+        chrono.start();
+        powerBarCursor.start();
+        cutEnabled = true;
     }
 
     /**
      * Cutting secuence. Launch each objects cut animation at proper time. Stops the chrono and
      * gets the trial score. After the secuence calls the ending secuence.
      */
-    public void cutSecuence() {
+    public void cutSequence() {
         cutEnabled = false;
         chrono.stop();
-        score = getScore();
         powerBarCursor.stop();
+        score = getScore();
         frameNum = 0;
         trialTimerHandler = new TimerHandler(0.1f, new ITimerCallback() {
             @Override
@@ -226,11 +204,40 @@ public class TrialSceneCut extends GameScene {
                     candleLeft.cut();
                     candleRight.cut();
                 }
-                if (frameNum == 100) {
-                    unregisterUpdateHandler(trialTimerHandler);
-                    endingSecuence();
+                if (frameNum == 60) {
+                    TrialSceneCut.this.unregisterUpdateHandler(trialTimerHandler);
+                    endingSequence();
                 }
-                frameNum ++;
+                frameNum++;
+            }
+        });
+        registerUpdateHandler(trialTimerHandler);
+    }
+
+    /**
+     * Shows the score and the final animation. Clean the HUD and calls to the next scene.
+     */
+    private void endingSequence() {
+        String message;
+        GameManager.getInstance().incrementScore(score);
+        if(score <= SCORE_POOR) {
+            message = "POOR, SCORE = " + score;
+        }
+        else if(score >= SCORE_GREAT) {
+            message = "GREAT! SCORE = " + score;
+        }
+        else {
+            message = "MEDIUM, SCORE = " + score;
+        }
+        gameHUD.showMessage(message, 0.25f, 5.0f, 0.25f);
+        trialTimerHandler= new TimerHandler(endingTime, new ITimerCallback()
+        {
+            @Override
+            public void onTimePassed(final TimerHandler pTimerHandler)
+            {
+                TrialSceneCut.this.unregisterUpdateHandler(trialTimerHandler);
+                gameHUD.detachChildren();
+                SceneManager.getInstance().showScene(new DummyMenu());
             }
         });
         registerUpdateHandler(trialTimerHandler);
@@ -241,55 +248,65 @@ public class TrialSceneCut extends GameScene {
      */
     private void timeOut() {
         cutEnabled = false;
+        powerBarCursor.stop();
         score = 0;
-        endingSecuence();
+        endingSequence();
     }
 
-    private void endingSecuence() {
-        String message;
-        GameManager.getInstance().incrementScore(score);
-        if(score <= SCORE_POOR) {
-            message = "POOR " + score;
+    /**
+     * When the action button is pressed launch the cut if enabled.
+     */
+    @Override
+    public void onPressButtonO() {
+        if (cutEnabled) {
+            cutSequence();
         }
-        else if(score >= SCORE_GREAT) {
-            message = "GREAT! " + score;
-        }
-        else {
-            message = "MEDIUM " + score;
-        }
-        trialTimerHandler= new TimerHandler(endingTime, new ITimerCallback()
-        {
-            @Override
-            public void onTimePassed(final TimerHandler pTimerHandler)
-            {
-                unregisterUpdateHandler(trialTimerHandler);
-                SceneManager.getInstance().showScene(new TrialSceneCut());
-            }
-        });
-        registerUpdateHandler(trialTimerHandler);
-        gameHUD.showComboMessage(message);
     }
 
-    // Puntuación:
-    // score (0-100) = valor power (0-100) - penalizacion por tiempo (segundos
-    // transcurridos x3)
+    /**
+     * Adjust the trial parameters using the game difficulty as base.
+     * @param diff The game difficulty.
+     */
+    private void setTrialDiff(int diff) {
+        if(diff == GameManager.getInstance().DIFF_EASY)
+            timeRound = 4;
+        else if(diff == GameManager.getInstance().DIFF_MEDIUM)
+            timeRound = 2;
+        else if(diff == GameManager.getInstance().DIFF_HARD)
+            timeRound = 1;
+    }
+
+    /**
+     * Calculates the trial score.
+     * @return The Trial Score (int from 0 to 100).
+     */
     private int getScore() {
         return Math.round(Math.abs(powerBarCursor.getPowerValue()) - (timeCounter * 3));
     }
 
+    /**
+     * Adds a white blink effect to the scene.
+     */
+    private void blink() {
+        blinkLayer.setAlpha(0.9f);
+        blinkLayer.registerEntityModifier(new SequenceEntityModifier(
+                new DelayModifier(0.6f), new FadeOutModifier(5f)));
+    }
 
-    // Clases auxiliares:
+    // Auxiliary Classes
 
-    // Clase Arbol:
+    /**
+     * The Tree class controls the tree in the scene.
+     * @author Madgear Games
+     */
     private class Tree extends Entity {
-        private final float gap = 160; // espacio entre las partes superior y la
-                                       // inferior
-        // calcula el desplazamiento entre las partes
+        // Space in pixles between the top and bottom parts:
+        private final float gap = 160;
+        // Adjust the tree bottom position:
         private float offset = (ResourceManager.getInstance().cutTreeTopTR.getHeight() / 2f +
                 ResourceManager.getInstance().cutTreeBottomTR.getHeight() / 2f) - gap;
-
-        Sprite top, bottom;
-
+        private Sprite top, bottom;
+        
         public Tree(float posX, float posY) {
             top = new Sprite(posX, posY,
                     ResourceManager.getInstance().cutTreeTopTR,
@@ -301,22 +318,26 @@ public class TrialSceneCut extends GameScene {
             attachChild(top);
         }
 
-        // Rompe el arbol:
+        /**
+         * Cut the tree!
+         */
         public void cut() {
-            top.registerEntityModifier(new MoveModifier(15, top.getX(), top
-                    .getY(), top.getX() - 100, top.getY() - 50));
+            top.registerEntityModifier(new MoveModifier(15, top.getX(), top.getY(),
+                    top.getX() - 100, top.getY() - 50));
         }
     }
 
-    // Clase Farol:
+    /**
+     * The Candle class controls the candle objects in the scene.
+     * @author Madgear Games
+     */
     private class Candle extends Entity {
-        private final float gap = 40; // espacio entre las partes superior y la
-                                      // inferior
-        // calcula el desplazamiento entre las partes
+        // Space in pixles between the top and bottom parts:
+        private final float gap = 40;
+        // Space in pixles between the top and bottom parts:
         private float offset = (ResourceManager.getInstance().cutCandleTopTR.getHeight() / 2f +
                 ResourceManager.getInstance().cutCandleBottomTR .getHeight() / 2f) - gap;
-
-        Sprite top, bottom, light;
+        private Sprite top, bottom, light;
 
         public Candle(float posX, float posY) {
             top = new Sprite(posX, posY,
@@ -329,109 +350,130 @@ public class TrialSceneCut extends GameScene {
                     ResourceManager.getInstance().cutCandleLightTR,
                     ResourceManager.getInstance().engine.getVertexBufferObjectManager());
             light.setAlpha(0.6f);
-
             attachChild(bottom);
             attachChild(top);
             attachChild(light);
-
         }
 
-        // Rompe el farol
+        /**
+         * Cut the candle!
+         */
         public void cut() {
             light.setVisible(false);
-            // Rompemos el farol con valores aleatorios para posicion final y
-            // rotación:
+            // Random values for rotation and ending position:
             top.registerEntityModifier(new ParallelEntityModifier(
-                    new JumpModifier(3f, top.getX(), top.getX()
-                            + (float) Math.random() * 600 - 300, top.getY(),
-                            top.getY() - 400, 100f), new RotationByModifier(2f,
-                            (float) Math.random() * 180)));
+                    new JumpModifier(3f,
+                            top.getX(),
+                            top.getX() + (float) Math.random() * 600 - 300,
+                            top.getY(),
+                            top.getY() - 400, 100f),
+                    new RotationByModifier(2f, (float) Math.random() * 180)));
         }
     }
 
-    // Clase personaje:
+    /**
+     * Controls the character object in the scene
+     * @author Madgear Games
+     */
     private class Character extends Entity {
-        AnimatedSprite charSprite;
+        private AnimatedSprite charSprite;
 
         public Character(float posX, float posY) {
             charSprite = new AnimatedSprite(posX, posY,
                     ResourceManager.getInstance().cutShoTR,
-                    ResourceManager.getInstance().engine
-                            .getVertexBufferObjectManager());
+                    ResourceManager.getInstance().engine.getVertexBufferObjectManager());
             attachChild(charSprite);
         }
 
+        /**
+         * Character cut animation.
+         */
         public void cut() {
             charSprite.animate(new long[] { 100, 50, 50, 1000 }, 0, 3, false);
         }
 
     }
 
-    // Clase para los ojos:
+    /**
+     * Eyes class.
+     * @author Madgear Games
+     */
     private class Eyes extends Entity {
-        Sprite eyesSprite;
+        private Sprite eyesSprite;
 
         public Eyes() {
             eyesSprite = new Sprite(width / 2, height / 2,
                     ResourceManager.getInstance().cutEyesTR,
                     ResourceManager.getInstance().engine.getVertexBufferObjectManager());
-            eyesSprite.setAlpha(0f); // inicialmente no se ven.
+            eyesSprite.setAlpha(0f);
             attachChild(eyesSprite);
-
         }
 
+        /**
+         * Eyes cut animation.
+         */
         public void cut() {
             eyesSprite.registerEntityModifier(new SequenceEntityModifier(
-                    new FadeInModifier(0.1f), new DelayModifier(0.5f),
+                    new FadeInModifier(0.1f),
+                    new DelayModifier(0.5f),
                     new FadeOutModifier(0.1f)));
         }
     }
 
-    // Katanas:
+    /**
+     * Katana class control the katana cuts.
+     * @author Madgear Games
+     */
     private class Katana extends Entity {
-        AnimatedSprite katanaSpriteRight;
-        AnimatedSprite katanaSpriteLeft;
-        Sprite katanaSpriteCenter;
-
-        long[] katanaAnimTime = { 50, 50, 50, 50 };
+        private AnimatedSprite katanaSpriteRight;
+        private AnimatedSprite katanaSpriteLeft;
+        private Sprite katanaSpriteCenter;
+        private long[] katanaAnimTime = { 50, 50, 50, 50 };
 
         public Katana() {
-            // Katana derecha
+            // Right katana cut:
             katanaSpriteRight = new AnimatedSprite(width / 2 + 300, height / 2,
                     ResourceManager.getInstance().cutSwordSparkle2TR,
                     ResourceManager.getInstance().engine.getVertexBufferObjectManager());
             katanaSpriteRight.setAlpha(0f);
             attachChild(katanaSpriteRight);
-
-            // Katana izquierda (invertida):
+            // Inverted left katana cut:
             katanaSpriteLeft = new AnimatedSprite(width / 2 - 300, height / 2,
                     ResourceManager.getInstance().cutSwordSparkle2TR,
                     ResourceManager.getInstance().engine.getVertexBufferObjectManager());
             katanaSpriteLeft.setAlpha(0f);
             katanaSpriteLeft.setFlipped(true, true);
             attachChild(katanaSpriteLeft);
-
-            // Katana central (arbol):
+            // Central katana cut (tree):
             katanaSpriteCenter = new Sprite(width / 2, height / 2 + 300,
                     ResourceManager.getInstance().cutSwordSparkle1TR,
                     ResourceManager.getInstance().engine.getVertexBufferObjectManager());
-            katanaSpriteCenter.setAlpha(0f); // inicialmente no se ve.
+            katanaSpriteCenter.setAlpha(0f);
             katanaSpriteCenter.setFlippedHorizontal(true);
             attachChild(katanaSpriteCenter);
         }
 
+        /**
+         * Right katana cut animation.
+         */
         public void cutRight() {
             katanaSpriteRight.registerEntityModifier(new SequenceEntityModifier(
                     new FadeInModifier(0.05f), new DelayModifier(0.4f), new FadeOutModifier(0.1f)));
             katanaSpriteRight.animate(katanaAnimTime, 0, 3, false);
         }
 
+        /**
+         * Left katana cut animation.
+         */
         public void cutLeft() {
             katanaSpriteLeft.registerEntityModifier(new SequenceEntityModifier(
                     new FadeInModifier(0.05f), new DelayModifier(0.4f), new FadeOutModifier(0.1f)));
             katanaSpriteLeft.animate(katanaAnimTime, 0, 3, false);
         }
 
+        /**
+         * Center katana cut animation.
+         */
         public void cutCenter() {
             katanaSpriteCenter.registerEntityModifier(new SequenceEntityModifier(
                     new FadeInModifier(0.1f), new DelayModifier(0.2f), new FadeOutModifier(0.1f)));
